@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard - Zenith Sleep</title>
+    <title>Doctor Dashboard - Zenith Sleep</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -24,11 +24,10 @@
       <div class="container">
         <div class="dashboard__header">
           <div>
-            <p class="eyebrow">Patient overview</p>
-            <h1>Sleepwalking frequency</h1>
+            <p class="eyebrow">Doctor portal</p>
+            <h1>Patient monitoring</h1>
             <p class="lead">
-              Weekly and monthly frequency pulled from the backend for
-              clinician review.
+              Review recent events and leave notes that appear in the patient app.
             </p>
           </div>
           <button class="btn btn--ghost" type="button" id="refresh">
@@ -36,7 +35,7 @@
           </button>
         </div>
 
-        <section class="dashboard__panel" id="doctorPanel" hidden>
+        <section class="dashboard__panel">
           <h2 class="section-title">Patient data</h2>
           <div class="patient-grid">
             <div>
@@ -68,19 +67,19 @@
         </section>
 
         <section class="dashboard__panel">
-          <h2 class="section-title">Frequency timeline</h2>
-          <div class="timeline" id="timeline">
-            <div class="timeline__bar" style="height: 35%"></div>
-            <div class="timeline__bar" style="height: 55%"></div>
-            <div class="timeline__bar" style="height: 40%"></div>
-            <div class="timeline__bar" style="height: 70%"></div>
-            <div class="timeline__bar" style="height: 60%"></div>
-            <div class="timeline__bar" style="height: 50%"></div>
-            <div class="timeline__bar" style="height: 45%"></div>
-          </div>
-          <p class="timeline__note">
-            Replace this mock timeline with real backend data.
-          </p>
+          <h2 class="section-title">Doctor notes</h2>
+          <form id="notesForm" class="notes-form">
+            <textarea
+              class="auth__input"
+              id="noteText"
+              rows="3"
+              placeholder="Add care team notes for the patient..."
+              required
+            ></textarea>
+            <button class="btn btn--dark" type="submit">Add note</button>
+          </form>
+          <ul class="notes-list" id="notesList"></ul>
+          <p class="stat-meta">Notes sync to the patient app in this demo.</p>
         </section>
       </div>
     </main>
@@ -91,38 +90,45 @@
       const weeklyTrend = document.getElementById("weekly-trend");
       const monthlyTrend = document.getElementById("monthly-trend");
       const refreshBtn = document.getElementById("refresh");
-      const doctorPanel = document.getElementById("doctorPanel");
+      const notesForm = document.getElementById("notesForm");
+      const noteText = document.getElementById("noteText");
+      const notesList = document.getElementById("notesList");
 
-      const params = new URLSearchParams(window.location.search);
-      const role = params.get("role");
-      if (role === "doctor") {
-        doctorPanel.hidden = false;
+      const STORAGE_KEY = "zenith_doctor_notes";
+
+      function loadNotes() {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        notesList.innerHTML = "";
+        stored.forEach((note) => {
+          const li = document.createElement("li");
+          li.textContent = note;
+          notesList.appendChild(li);
+        });
       }
 
-      async function fetchStats() {
+      notesForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const text = noteText.value.trim();
+        if (!text) return;
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        stored.unshift(text);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stored.slice(0, 5)));
+        noteText.value = "";
+        loadNotes();
+      });
+
+      refreshBtn.addEventListener("click", () => {
         weeklyTrend.textContent = "Loading…";
         monthlyTrend.textContent = "Loading…";
+        setTimeout(() => {
+          weeklyEl.textContent = "4";
+          monthlyEl.textContent = "12";
+          weeklyTrend.textContent = "+2 vs last week";
+          monthlyTrend.textContent = "-1 vs last month";
+        }, 300);
+      });
 
-        try {
-          // TODO: Replace with your real backend endpoint.
-          // Expected JSON shape:
-          // { "weekly_count": 4, "monthly_count": 12, "weekly_trend": "+2 vs last week", "monthly_trend": "-1 vs last month" }
-          const response = await fetch("/api/sleepwalking/stats");
-          if (!response.ok) throw new Error("Bad response");
-          const data = await response.json();
-
-          weeklyEl.textContent = data.weekly_count ?? "--";
-          monthlyEl.textContent = data.monthly_count ?? "--";
-          weeklyTrend.textContent = data.weekly_trend ?? "Updated.";
-          monthlyTrend.textContent = data.monthly_trend ?? "Updated.";
-        } catch (error) {
-          weeklyTrend.textContent = "Backend not connected yet.";
-          monthlyTrend.textContent = "Backend not connected yet.";
-        }
-      }
-
-      refreshBtn.addEventListener("click", fetchStats);
-      fetchStats();
+      loadNotes();
     </script>
   </body>
 </html>

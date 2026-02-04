@@ -49,17 +49,16 @@ body {
   letter-spacing: 0.5px;
 }
 
-.brand__mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: conic-gradient(from 110deg, var(--accent), #98c9d0, #3a7986);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+.brand__logo {
+  height: 34px;
+  width: auto;
+  display: block;
 }
 
 .brand__name {
   font-family: "Playfair Display", "Times New Roman", serif;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  color: var(--white);
 }
 
 .topbar__cta {
@@ -402,6 +401,21 @@ h1 {
   color: var(--ink-soft);
 }
 
+.auth__role {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-family: "Work Sans", "Helvetica Neue", sans-serif;
+}
+
+.auth__option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
 .dashboard {
   padding: 60px 0 90px;
 }
@@ -453,6 +467,34 @@ h1 {
   border-radius: 22px;
   padding: 26px;
   box-shadow: 0 18px 40px rgba(10, 45, 57, 0.1);
+}
+
+.patient-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.notes-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 8px;
+  display: grid;
+  gap: 10px;
+}
+
+.notes-list li {
+  background: #f3f8fb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--ink-soft);
 }
 
 .timeline {

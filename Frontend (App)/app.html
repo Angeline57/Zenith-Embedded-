@@ -9,7 +9,8 @@
   <body>
     <main class="phone">
       <header class="phone__top">
-        <div>
+        <div class="brandline">
+          <img class="brandline__logo" src="../Zenith_logo.png" alt="Zenith Sleep logo" />
           <p class="eyebrow">Zenith Sleep</p>
           <h1>Live Safety Dashboard</h1>
         </div>
@@ -25,25 +26,34 @@
         <div class="status__dot" id="statusDot" aria-hidden="true"></div>
       </section>
 
+      <section class="card device">
+        <div>
+          <p class="label">Device wear status</p>
+          <h2 id="deviceStatus">On person</h2>
+          <p class="meta" id="deviceMeta">Signal stable.</p>
+        </div>
+        <div class="status__dot" id="deviceDot" aria-hidden="true"></div>
+      </section>
+
       <section class="card stats">
         <div>
           <p class="label">Sleepwalking</p>
-          <p class="value" id="weeklyCount">--</p>
+          <p class="value" id="weeklyCount">0</p>
           <p class="meta">Past 7 days</p>
         </div>
         <div>
           <p class="label">Sleepwalking</p>
-          <p class="value" id="monthlyCount">--</p>
+          <p class="value" id="monthlyCount">0</p>
           <p class="meta">Past 30 days</p>
         </div>
       </section>
 
       <section class="card timeline">
         <div class="timeline__header">
-          <p class="label">Past week trend</p>
-          <p class="meta">Events per night</p>
+          <p class="label">Notes from doctor</p>
+          <p class="meta">Care team observations</p>
         </div>
-        <div class="timeline__bars" id="timelineBars"></div>
+        <ul class="notes" id="doctorNotes"></ul>
       </section>
 
       <section class="card alerts" id="alertCard">
@@ -58,6 +68,11 @@
           <button class="btn btn--ghost" id="triggerSleep">Trigger sleepwalk</button>
           <button class="btn btn--ghost" id="resolveSleep">Resolve sleepwalk</button>
           <button class="btn btn--dark" id="triggerFall">Trigger fall</button>
+          <button class="btn btn--ghost" id="resetCounts">Reset counters</button>
+        </div>
+        <div class="controls__grid">
+          <button class="btn btn--ghost" id="deviceOn">Device on person</button>
+          <button class="btn btn--ghost" id="deviceOff">Device off person</button>
         </div>
         <div class="controls__grid">
           <button class="btn btn--ghost" data-speed="1">Speed 1x</button>

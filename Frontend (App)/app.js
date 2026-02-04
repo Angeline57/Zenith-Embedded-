@@ -3,14 +3,20 @@ const statusMeta = document.getElementById("statusMeta");
 const statusDot = document.getElementById("statusDot");
 const weeklyCount = document.getElementById("weeklyCount");
 const monthlyCount = document.getElementById("monthlyCount");
-const timelineBars = document.getElementById("timelineBars");
+const doctorNotes = document.getElementById("doctorNotes");
 const alertEmpty = document.getElementById("alertEmpty");
 const alertList = document.getElementById("alertList");
 const triggerSleep = document.getElementById("triggerSleep");
 const resolveSleep = document.getElementById("resolveSleep");
 const triggerFall = document.getElementById("triggerFall");
+const resetCounts = document.getElementById("resetCounts");
 const fallOverlay = document.getElementById("fallOverlay");
 const acknowledgeBtn = document.getElementById("acknowledge");
+const deviceStatus = document.getElementById("deviceStatus");
+const deviceMeta = document.getElementById("deviceMeta");
+const deviceDot = document.getElementById("deviceDot");
+const deviceOn = document.getElementById("deviceOn");
+const deviceOff = document.getElementById("deviceOff");
 const speedButtons = document.querySelectorAll("[data-speed]");
 
 const DB_URL = "https://embedded-zenith-default-rtdb.firebaseio.com/latest.json";
@@ -18,6 +24,8 @@ let lastTs = null;
 let speed = 1;
 let activeFallAlert = null;
 let activeSleepAlert = null;
+let weeklyTotal = 0;
+let monthlyTotal = 0;
 
 const escalation = {
   sleepwalkNotice: "Sleepwalking detected. Monitoring closely.",
@@ -89,24 +97,37 @@ function randomInt(min, max) {
 }
 
 function updateMockStats() {
-  const weekly = randomInt(2, 7);
-  const monthly = weekly + randomInt(4, 10);
-  weeklyCount.textContent = weekly;
-  monthlyCount.textContent = monthly;
+  weeklyCount.textContent = weeklyTotal;
+  monthlyCount.textContent = monthlyTotal;
 
-  timelineBars.innerHTML = "";
-  for (let i = 0; i < 7; i += 1) {
-    const bar = document.createElement("div");
-    bar.className = "timeline__bar";
-    bar.style.height = `${randomInt(25, 95)}%`;
-    timelineBars.appendChild(bar);
-  }
+  doctorNotes.innerHTML = "";
+  const stored = JSON.parse(localStorage.getItem("zenith_doctor_notes") || "[]");
+  const notes = stored.length
+    ? stored
+    : [
+        "Patient reported mild restlessness at 2:10 AM.",
+        "No fall incidents in the last 48 hours.",
+        "Caregiver noted improved bedtime routine compliance.",
+        "Follow-up recommended after 7 nights of monitoring.",
+      ];
+  notes.forEach((note) => {
+    const item = document.createElement("li");
+    item.textContent = note;
+    doctorNotes.appendChild(item);
+  });
+}
+
+function incrementCounters() {
+  weeklyTotal += 1;
+  monthlyTotal += 1;
+  updateMockStats();
 }
 
 function triggerSleepwalk() {
   setStatus("Sleepwalking", "Movement detected. Care team notified.", "#f2c85b");
   if (!activeSleepAlert) {
     activeSleepAlert = addAlert("Sleepwalking", escalation.sleepwalkNotice);
+    incrementCounters();
   }
 }
 
@@ -124,7 +145,24 @@ function resolveSleepwalk() {
 function triggerFallEvent() {
   setStatus("Fall detected", "Awaiting acknowledgment.", "#d64545");
   activeFallAlert = addAlert("Fall detected", "Fall detected. Awaiting acknowledgment.");
+  if (!activeSleepAlert) {
+    incrementCounters();
+  }
   fallOverlay.hidden = false;
+}
+
+function setDeviceStatus(isOnPerson) {
+  if (isOnPerson) {
+    deviceStatus.textContent = "On person";
+    deviceMeta.textContent = "Signal stable.";
+    deviceDot.style.background = "#3fc06a";
+    deviceDot.style.boxShadow = "0 0 0 6px rgba(63, 192, 106, 0.15)";
+  } else {
+    deviceStatus.textContent = "Off person";
+    deviceMeta.textContent = "No contact detected. Please check device.";
+    deviceDot.style.background = "#d64545";
+    deviceDot.style.boxShadow = "0 0 0 6px rgba(214, 69, 69, 0.15)";
+  }
 }
 
 function acknowledgeFall() {
@@ -152,7 +190,15 @@ triggerSleep.addEventListener("click", triggerSleepwalk);
 resolveSleep.addEventListener("click", resolveSleepwalk);
 triggerFall.addEventListener("click", triggerFallEvent);
 acknowledgeBtn.addEventListener("click", acknowledgeFall);
+resetCounts.addEventListener("click", () => {
+  weeklyTotal = 0;
+  monthlyTotal = 0;
+  updateMockStats();
+});
+deviceOn.addEventListener("click", () => setDeviceStatus(true));
+deviceOff.addEventListener("click", () => setDeviceStatus(false));
 
 updateMockStats();
 setStatus("Normal", "No alerts in the last hour.", "#3fc06a");
+setDeviceStatus(true);
 pollFirebase();
