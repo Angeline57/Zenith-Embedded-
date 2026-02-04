@@ -8,7 +8,6 @@ const alertEmpty = document.getElementById("alertEmpty");
 const alertList = document.getElementById("alertList");
 const triggerSleep = document.getElementById("triggerSleep");
 const resolveSleep = document.getElementById("resolveSleep");
-const triggerFall = document.getElementById("triggerFall");
 const resetCounts = document.getElementById("resetCounts");
 const fallOverlay = document.getElementById("fallOverlay");
 const acknowledgeBtn = document.getElementById("acknowledge");
@@ -26,6 +25,10 @@ let activeFallAlert = null;
 let activeSleepAlert = null;
 let weeklyTotal = 0;
 let monthlyTotal = 0;
+let lastFallTs = null;
+
+const FIREBASE_DB = "https://embedded-zenith-default-rtdb.firebaseio.com";
+const LATEST_URL = `${FIREBASE_DB}/latest.json`;
 
 const escalation = {
   sleepwalkNotice: "Sleepwalking detected. Monitoring closely.",
@@ -188,7 +191,6 @@ speedButtons.forEach((btn) => {
 // Manual overwrite 
 triggerSleep.addEventListener("click", triggerSleepwalk);
 resolveSleep.addEventListener("click", resolveSleepwalk);
-triggerFall.addEventListener("click", triggerFallEvent);
 acknowledgeBtn.addEventListener("click", acknowledgeFall);
 resetCounts.addEventListener("click", () => {
   weeklyTotal = 0;
@@ -201,4 +203,30 @@ deviceOff.addEventListener("click", () => setDeviceStatus(false));
 updateMockStats();
 setStatus("Normal", "No alerts in the last hour.", "#3fc06a");
 setDeviceStatus(true);
+
+async function pollLatest() {
+  try {
+    const response = await fetch(LATEST_URL, { cache: "no-store" });
+    if (!response.ok) return;
+    const data = await response.json();
+    if (!data) return;
+
+    if (typeof data.device_on_person === "boolean") {
+      setDeviceStatus(data.device_on_person);
+    }
+
+    if (data.fall) {
+      const ts = data.ts || Date.now();
+      if (ts !== lastFallTs) {
+        lastFallTs = ts;
+        triggerFallEvent();
+      }
+    }
+  } catch (error) {
+    // Silent fail for demo mode
+  }
+}
+
+setInterval(pollLatest, 1500);
+pollLatest();
 pollFirebase();

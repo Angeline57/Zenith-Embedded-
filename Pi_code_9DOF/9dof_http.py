@@ -44,6 +44,7 @@ ACC_COUNTS_PER_G = 4096.0
 G = 9.80665
 GYRO_COUNTS_PER_DPS = 16.4
 MAG_UT_PER_COUNT = 0.1
+FALL_THRESHOLD_MPS2 = 25.0
 
 # ---------------- Helpers ----------------
 def read_u8(addr, reg):
@@ -69,6 +70,9 @@ def gyro_raw_to_rads(raw):
 
 def mag_raw_to_uT(raw):
     return raw * MAG_UT_PER_COUNT
+
+def total_accel_mps2(ax_mps2, ay_mps2, az_mps2):
+    return math.sqrt(ax_mps2**2 + ay_mps2**2 + az_mps2**2)
 
 # ---------------- Init functions ----------------
 def fxos_init():
@@ -173,6 +177,14 @@ def main():
                 "z": round(mag_raw_to_uT(mz), 3),
             },
         }
+
+        total_accel = total_accel_mps2(
+            payload["accel_mps2"]["x"],
+            payload["accel_mps2"]["y"],
+            payload["accel_mps2"]["z"],
+        )
+        payload["total_accel_mps2"] = round(total_accel, 3)
+        payload["fall"] = total_accel >= FALL_THRESHOLD_MPS2
 
         # ?? write BOTH
         upload_timeseries(payload)
