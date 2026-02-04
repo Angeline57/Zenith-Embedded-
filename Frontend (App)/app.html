@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zenith Sleep - Mobile App</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <main class="phone">
+      <header class="phone__top">
+        <div>
+          <p class="eyebrow">Zenith Sleep</p>
+          <h1>Live Safety Dashboard</h1>
+        </div>
+        <div class="pill">Mock data</div>
+      </header>
+
+      <section class="card status">
+        <div>
+          <p class="label">Current status</p>
+          <h2 id="statusText">Normal</h2>
+          <p class="meta" id="statusMeta">No alerts in the last hour.</p>
+        </div>
+        <div class="status__dot" id="statusDot" aria-hidden="true"></div>
+      </section>
+
+      <section class="card stats">
+        <div>
+          <p class="label">Sleepwalking</p>
+          <p class="value" id="weeklyCount">--</p>
+          <p class="meta">Past 7 days</p>
+        </div>
+        <div>
+          <p class="label">Sleepwalking</p>
+          <p class="value" id="monthlyCount">--</p>
+          <p class="meta">Past 30 days</p>
+        </div>
+      </section>
+
+      <section class="card timeline">
+        <div class="timeline__header">
+          <p class="label">Past week trend</p>
+          <p class="meta">Events per night</p>
+        </div>
+        <div class="timeline__bars" id="timelineBars"></div>
+      </section>
+
+      <section class="card alerts" id="alertCard">
+        <p class="label">Active alerts</p>
+        <div class="alert__empty" id="alertEmpty">No active alerts.</div>
+        <div class="alert__list" id="alertList"></div>
+      </section>
+
+      <section class="card controls">
+        <p class="label">Simulation controls</p>
+        <div class="controls__grid">
+          <button class="btn btn--ghost" id="triggerSleep">Trigger sleepwalk</button>
+          <button class="btn btn--ghost" id="resolveSleep">Resolve sleepwalk</button>
+          <button class="btn btn--dark" id="triggerFall">Trigger fall</button>
+        </div>
+        <div class="controls__grid">
+          <button class="btn btn--ghost" data-speed="1">Speed 1x</button>
+          <button class="btn btn--ghost" data-speed="10">Speed 10x</button>
+          <button class="btn btn--ghost" data-speed="30">Speed 30x</button>
+        </div>
+        <p class="meta">Speed changes how fast escalation timers run.</p>
+      </section>
+    </main>
+
+    <div class="overlay" id="fallOverlay" hidden>
+      <div class="overlay__card">
+        <h2>Fall detected</h2>
+        <p>Please acknowledge to stop the alert.</p>
+        <button class="btn btn--dark" id="acknowledge">Acknowledge</button>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
