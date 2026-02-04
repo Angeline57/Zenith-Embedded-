@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>User Login - Zenith Sleep</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true"></div>
+          <span class="brand__name">Zenith Sleep</span>
+        </div>
+        <div class="topbar__cta">
+          <a class="btn btn--light" href="index.html">Back to site</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="auth">
+      <div class="container auth__grid">
+        <div class="auth__copy">
+          <p class="eyebrow">Secure access</p>
+          <h1>Welcome back</h1>
+          <p class="lead">
+            Log in to view your patient dashboard and weekly/monthly sleepwalking
+            trends.
+          </p>
+        </div>
+        <form class="auth__card" action="dashboard.html" method="get">
+          <label class="auth__label" for="email">Email</label>
+          <input class="auth__input" id="email" name="email" type="email" required />
+
+          <label class="auth__label" for="password">Password</label>
+          <input
+            class="auth__input"
+            id="password"
+            name="password"
+            type="password"
+            required
+          />
+
+          <button class="btn btn--dark auth__submit" type="submit">Sign in</button>
+          <p class="auth__footnote">
+            Demo only. Authentication will be connected to backend services.
+          </p>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>
