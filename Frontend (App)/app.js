@@ -27,6 +27,7 @@ let activeSleepAlert = null;
 let weeklyTotal = 0;
 let monthlyTotal = 0;
 let lastFallTs = null;
+let lastSimTs = 0;
 
 const FIREBASE_DB = "https://embedded-zenith-default-rtdb.firebaseio.com";
 const LATEST_URL = `${FIREBASE_DB}/latest.json`;
@@ -196,29 +197,79 @@ function acknowledgeFall() {
 }
 
 // Event listener 
-speedButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    speed = Number(btn.dataset.speed) || 1;
-    addAlert("Simulation speed", `Speed set to ${speed}x.`);
+if (speedButtons.length) {
+  speedButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      speed = Number(btn.dataset.speed) || 1;
+      addAlert("Simulation speed", `Speed set to ${speed}x.`);
+    });
   });
-});
+}
 
 // Manual overwrite 
-triggerSleep.addEventListener("click", triggerSleepwalk);
-resolveSleep.addEventListener("click", resolveSleepwalk);
-triggerFall.addEventListener("click", triggerFallEvent);
-acknowledgeBtn.addEventListener("click", acknowledgeFall);
-resetCounts.addEventListener("click", () => {
-  weeklyTotal = 0;
-  monthlyTotal = 0;
-  updateMockStats();
-});
-deviceOn.addEventListener("click", () => setDeviceStatus(true));
-deviceOff.addEventListener("click", () => setDeviceStatus(false));
+if (triggerSleep) triggerSleep.addEventListener("click", triggerSleepwalk);
+if (resolveSleep) resolveSleep.addEventListener("click", resolveSleepwalk);
+if (triggerFall) triggerFall.addEventListener("click", triggerFallEvent);
+if (acknowledgeBtn) acknowledgeBtn.addEventListener("click", acknowledgeFall);
+if (resetCounts) {
+  resetCounts.addEventListener("click", () => {
+    weeklyTotal = 0;
+    monthlyTotal = 0;
+    updateMockStats();
+  });
+}
+if (deviceOn) deviceOn.addEventListener("click", () => setDeviceStatus(true));
+if (deviceOff) deviceOff.addEventListener("click", () => setDeviceStatus(false));
 
 updateMockStats();
 setStatus("Normal", "No alerts in the last hour.", "#3fc06a");
 setDeviceStatus(true);
+
+function applySimCommand(command) {
+  if (!command || !command.type) return;
+  switch (command.type) {
+    case "triggerSleep":
+      triggerSleepwalk();
+      break;
+    case "resolveSleep":
+      resolveSleepwalk();
+      break;
+    case "triggerFall":
+      triggerFallEvent();
+      break;
+    case "resetCounts":
+      weeklyTotal = 0;
+      monthlyTotal = 0;
+      updateMockStats();
+      break;
+    case "deviceOn":
+      setDeviceStatus(true);
+      break;
+    case "deviceOff":
+      setDeviceStatus(false);
+      break;
+    case "speed":
+      speed = Number(command.payload?.speed) || 1;
+      addAlert("Simulation speed", `Speed set to ${speed}x.`);
+      break;
+    default:
+      break;
+  }
+}
+
+function checkSimCommands() {
+  try {
+    const raw = localStorage.getItem("zenith_sim_command");
+    if (!raw) return;
+    const command = JSON.parse(raw);
+    if (command.ts && command.ts > lastSimTs) {
+      lastSimTs = command.ts;
+      applySimCommand(command);
+    }
+  } catch {
+    // ignore malformed commands
+  }
+}
 
 async function pollLatest() {
   try {
@@ -245,3 +296,5 @@ async function pollLatest() {
 
 
 pollFirebase();
+setInterval(checkSimCommands, 500);
+checkSimCommands();
