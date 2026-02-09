@@ -14,7 +14,7 @@ SCOPES = [
 
 # ===================== Logic Constants =====================
 # You can change these values here without touching the Raspberry Pi!
-TEMP_THRESHOLD = 23  # Celsius
+TEMP_THRESHOLD = 21.8  # Celsius
 
 # ===================== Authenticated session =====================
 credentials = service_account.Credentials.from_service_account_file(
