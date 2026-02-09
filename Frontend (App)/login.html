@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zenith Sleep - App Login</title>
+    <link rel="stylesheet" href="app.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#0c3b4a" />
+  </head>
+  <body>
+    <main class="phone auth-screen">
+      <header class="phone__top">
+        <div class="brandline">
+          <img class="brandline__logo" src="../Zenith%20Sleep%20logo%20design.png" alt="Zenith Sleep logo" />
+          <p class="eyebrow">Zenith Sleep</p>
+          <h1>Welcome back</h1>
+        </div>
+        <div class="pill">Secure login</div>
+      </header>
+
+      <form class="card auth-card" action="app.html" method="get">
+        <label class="label" for="username">Username</label>
+        <input class="auth-input" id="username" name="username" type="text" required />
+
+        <label class="label" for="password">Password</label>
+        <input class="auth-input" id="password" name="password" type="password" required />
+
+        <label class="checkbox">
+          <input type="checkbox" name="remember" />
+          Remember me
+        </label>
+
+        <label class="checkbox">
+          <input type="checkbox" name="biometric" />
+          Enable Face ID / biometrics for auto-login
+        </label>
+
+        <button class="btn btn--dark" type="submit">Sign in</button>
+      </form>
+    </main>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js");
+      }
+    </script>
+  </body>
+</html>

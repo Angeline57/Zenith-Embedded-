@@ -8,6 +8,7 @@ const alertEmpty = document.getElementById("alertEmpty");
 const alertList = document.getElementById("alertList");
 const triggerSleep = document.getElementById("triggerSleep");
 const resolveSleep = document.getElementById("resolveSleep");
+const triggerFall = document.getElementById("triggerFall");
 const resetCounts = document.getElementById("resetCounts");
 const fallOverlay = document.getElementById("fallOverlay");
 const acknowledgeBtn = document.getElementById("acknowledge");
@@ -34,49 +35,63 @@ const escalation = {
   sleepwalkNotice: "Sleepwalking detected. Monitoring closely.",
 };
 
-// Mimics the Python "while True" logic
-async function pollFirebase() {
-  try {
-    const response = await fetch(DB_URL);
-    if (!response.ok) throw new Error("Server unreachable");
 
-    const data = await response.json();
-
-    if (data && data.ts !== lastTs) {
-      handleNewData(data);
-    }
-  } catch (error) {
-    console.error("Fetch error:", error);
-    statusMeta.textContent = "Connection Lost - Retrying...";
-    statusDot.style.background = "#888"; // Grey out if offline
-  }
-
-  // Polling rate: 500ms (2Hz) adjusted by simulation speed
-  setTimeout(pollFirebase, 500 / speed);
-}
-
+// Replace handleNewData and pollLatest with this unified logic
 function handleNewData(data) {
-  lastTs = data.ts;
+    lastTs = data.ts;
 
-  const isFall = data.fall === true || data.event === "FALL";
-  const isSleepwalking = data.event === "SLEEPWALKING" || data.fall_state === "MOVING";
-  const az = data.accel_mps2?.z?.toFixed(2) || "0.00";
+    // 1. Sync On-Person Status (Temperature Logic)
+    if (typeof data.device_on_person === "boolean") {
+        setDeviceStatus(data.device_on_person);
+    }
 
-  // 1. Handle Fall Detection
-  if (isFall) {
-    if (!activeFallAlert) triggerFallEvent();
-  }
+    // 2. Logic for Falls
+    // Matches both "FALL" and "FALL_DETECTED" for safety
+    const isFall = data.fall === true || data.event === "FALL" || data.event === "FALL_DETECTED";
+    
+    // 3. Logic for Sleepwalking
+    const isSleepwalking = data.event === "SLEEPWALKING" || data.fall_state === "MOVING";
 
-  // 2. Handle Sleepwalking Detection
-  if (isSleepwalking) {
-    if (!activeSleepAlert) triggerSleepwalk();
-  } else if (activeSleepAlert && data.fall_state === "STATIONARY") {
-    resolveSleepwalk();
-  }
+    // 4. Update UI based on logic
+    if (isFall && !activeFallAlert) {
+        triggerFallEvent();
+    }
 
-  // 3. Update Live Telemetry
-  statusMeta.textContent = `Live: az=${az} m/s² | ts=${lastTs.toFixed(3)}`;
+    if (isSleepwalking) {
+        if (!activeSleepAlert) triggerSleepwalk();
+    } else if (activeSleepAlert && data.fall_state === "STATIONARY") {
+        resolveSleepwalk();
+    }
+
+    // 5. Update Telemetry with Temperature
+    const az = data.accel_mps2?.z?.toFixed(2) || "0.00";
+    const temp = data.tmp_die_c ? data.tmp_die_c.toFixed(1) : "--";
+    statusMeta.textContent = `Live: az=${az} | Temp=${temp}°C | ts=${lastTs.toFixed(2)}`;
 }
+
+// Optimized Unified Polling
+async function pollFirebase() {
+    try {
+        // 'no-cache' ensures we don't get old data stuck in the browser
+        const response = await fetch(DB_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error("Server unreachable");
+
+        const data = await response.json();
+
+        // Only update if the timestamp has changed
+        if (data && data.ts !== lastTs) {
+            handleNewData(data);
+        }
+    } catch (error) {
+        console.error("Fetch error:", error);
+        statusMeta.textContent = "Offline - Reconnecting...";
+        statusDot.style.background = "#888";
+    }
+
+    // Polling rate adjusted by simulation speed (default 500ms)
+    setTimeout(pollFirebase, 500 / speed);
+}
+
 
 
 function setStatus(state, meta, color) {
@@ -191,6 +206,7 @@ speedButtons.forEach((btn) => {
 // Manual overwrite 
 triggerSleep.addEventListener("click", triggerSleepwalk);
 resolveSleep.addEventListener("click", resolveSleepwalk);
+triggerFall.addEventListener("click", triggerFallEvent);
 acknowledgeBtn.addEventListener("click", acknowledgeFall);
 resetCounts.addEventListener("click", () => {
   weeklyTotal = 0;
@@ -227,6 +243,5 @@ async function pollLatest() {
   }
 }
 
-setInterval(pollLatest, 1500);
-pollLatest();
+
 pollFirebase();

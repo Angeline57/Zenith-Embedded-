@@ -22,6 +22,12 @@ body {
   color: var(--ink);
 }
 
+.layout {
+  display: grid;
+  gap: 24px;
+  justify-items: center;
+}
+
 .phone {
   width: min(420px, 92vw);
   margin: 24px auto 40px;
@@ -79,6 +85,30 @@ h1 {
   padding: 18px;
   margin-bottom: 14px;
   box-shadow: 0 10px 26px rgba(10, 45, 57, 0.08);
+}
+
+.auth-screen {
+  margin-top: 40px;
+}
+
+.auth-card {
+  display: grid;
+  gap: 12px;
+}
+
+.auth-input {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(10, 45, 57, 0.2);
+  font-size: 0.95rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
 }
 
 .label {
@@ -165,6 +195,18 @@ h1 {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 10px;
   margin-bottom: 8px;
+}
+
+.sim-panel {
+  width: min(420px, 92vw);
+  margin: 0 auto 40px;
+}
+
+.sim-panel__inner {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 26px rgba(10, 45, 57, 0.08);
 }
 
 .btn {

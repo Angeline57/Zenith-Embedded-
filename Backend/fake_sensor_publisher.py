@@ -24,8 +24,4 @@ while True:
     client.publish(TOPIC, payload)
 
     print("Published:", payload)
-<<<<<<< HEAD
     time.sleep(2)
-=======
-    time.sleep(2)
->>>>>>> e6775d6 (Added sensor scripts and updated sending logic)

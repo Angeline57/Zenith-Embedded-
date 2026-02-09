@@ -1,10 +1,27 @@
-import requests, time
-db = "https://embedded-zenith-default-rtdb.firebaseio.com/"
-path = "timeseries.json" #This node was created in the Firebase console in step 1
-query = "?orderBy=\"rnd\"&startAt=0.5&endAt=1.0"
-response = requests.get(db+path+query)
+import json
+import time
+import random
+import paho.mqtt.client as mqtt
 
-if response.ok:
-    print(response.json())
-else:
-    raise ConnectionError("Could not access database: {}".format(response.text))
+BROKER = "test.mosquitto.org"
+PORT = 1883
+TOPIC = "IC.embedded/Zenith/bed_sensor"
+
+client = mqtt.Client()
+client.connect(BROKER, PORT)
+
+print("Fake sensor publishing...")
+
+while True:
+    # Simulate accelerometer Z-axis
+    accel_z = random.uniform(0.5, 9.8)
+
+    data = {
+        "accel_z": accel_z
+    }
+
+    payload = json.dumps(data)
+    client.publish(TOPIC, payload)
+
+    print("Published:", payload)
+    time.sleep(2)
