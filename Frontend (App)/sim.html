@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zenith Sleep - Simulation Controls</title>
+    <link rel="stylesheet" href="app.css" />
+    <meta name="theme-color" content="#0c3b4a" />
+  </head>
+  <body>
+    <main class="phone sim-only">
+      <header class="phone__top">
+        <div class="brandline">
+          <img class="brandline__logo" src="../Zenith%20Sleep%20logo%20design.png" alt="Zenith Sleep logo" />
+          <p class="eyebrow">Zenith Sleep</p>
+          <h1>Simulation Controls</h1>
+        </div>
+        <div class="pill">Mock data</div>
+      </header>
+
+      <section class="card">
+        <p class="label">Events</p>
+        <div class="controls__grid">
+          <button class="btn btn--ghost" id="triggerSleep">Trigger sleepwalk</button>
+          <button class="btn btn--ghost" id="resolveSleep">Resolve sleepwalk</button>
+          <button class="btn btn--dark" id="triggerFall">Trigger fall</button>
+          <button class="btn btn--ghost" id="resetCounts">Reset counters</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <p class="label">Device status</p>
+        <div class="controls__grid">
+          <button class="btn btn--ghost" id="deviceOn">Device on person</button>
+          <button class="btn btn--ghost" id="deviceOff">Device off person</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <p class="label">Simulation speed</p>
+        <div class="controls__grid">
+          <button class="btn btn--ghost" data-speed="1">Speed 1x</button>
+          <button class="btn btn--ghost" data-speed="10">Speed 10x</button>
+          <button class="btn btn--ghost" data-speed="30">Speed 30x</button>
+        </div>
+        <p class="meta">Speed changes how fast escalation timers run.</p>
+      </section>
+    </main>
+
+    <script src="sim.js"></script>
+  </body>
+</html>
