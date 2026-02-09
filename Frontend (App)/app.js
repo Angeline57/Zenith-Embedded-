@@ -8,6 +8,7 @@ const alertEmpty = document.getElementById("alertEmpty");
 const alertList = document.getElementById("alertList");
 const triggerSleep = document.getElementById("triggerSleep");
 const resolveSleep = document.getElementById("resolveSleep");
+const triggerFall = document.getElementById("triggerFall");
 const resetCounts = document.getElementById("resetCounts");
 const fallOverlay = document.getElementById("fallOverlay");
 const acknowledgeBtn = document.getElementById("acknowledge");
@@ -191,6 +192,7 @@ speedButtons.forEach((btn) => {
 // Manual overwrite 
 triggerSleep.addEventListener("click", triggerSleepwalk);
 resolveSleep.addEventListener("click", resolveSleepwalk);
+triggerFall.addEventListener("click", triggerFallEvent);
 acknowledgeBtn.addEventListener("click", acknowledgeFall);
 resetCounts.addEventListener("click", () => {
   weeklyTotal = 0;
