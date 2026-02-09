@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Doctor Dashboard - Zenith Sleep</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div class="brand">
+          <img class="brand__logo" src="../Zenith_logo.png" alt="Zenith Sleep logo" />
+          <span class="brand__name">Zenith Sleep</span>
+        </div>
+        <div class="topbar__cta">
+          <span class="topbar__phone">24/7 Support: 07708797039</span>
+          <a class="btn btn--light" href="index.html">Marketing site</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <div class="container">
+        <div class="dashboard__header">
+          <div>
+            <p class="eyebrow">Doctor portal</p>
+            <h1>Patient monitoring</h1>
+            <p class="lead">
+              Review recent events and leave notes that appear in the patient app.
+            </p>
+          </div>
+          <button class="btn btn--ghost" type="button" id="refresh">
+            Refresh data
+          </button>
+        </div>
+
+        <section class="dashboard__panel">
+          <h2 class="section-title">Patient data</h2>
+          <div class="patient-grid">
+            <div>
+              <p class="stat-label">Patient</p>
+              <p class="stat-value">E. Johnson</p>
+            </div>
+            <div>
+              <p class="stat-label">Risk level</p>
+              <p class="stat-value">Moderate</p>
+            </div>
+            <div>
+              <p class="stat-label">Last incident</p>
+              <p class="stat-value">2 nights ago</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="dashboard__grid">
+          <article class="stat-card">
+            <p class="stat-label">Past 7 days</p>
+            <p class="stat-value" id="weekly-count">--</p>
+            <p class="stat-meta" id="weekly-trend">Waiting for data…</p>
+          </article>
+          <article class="stat-card">
+            <p class="stat-label">Past 30 days</p>
+            <p class="stat-value" id="monthly-count">--</p>
+            <p class="stat-meta" id="monthly-trend">Waiting for data…</p>
+          </article>
+        </section>
+
+        <section class="dashboard__panel">
+          <h2 class="section-title">Doctor notes</h2>
+          <form id="notesForm" class="notes-form">
+            <textarea
+              class="auth__input"
+              id="noteText"
+              rows="3"
+              placeholder="Add care team notes for the patient..."
+              required
+            ></textarea>
+            <button class="btn btn--dark" type="submit">Add note</button>
+          </form>
+          <ul class="notes-list" id="notesList"></ul>
+          <p class="stat-meta">Notes sync to the patient app in this demo.</p>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const weeklyEl = document.getElementById("weekly-count");
+      const monthlyEl = document.getElementById("monthly-count");
+      const weeklyTrend = document.getElementById("weekly-trend");
+      const monthlyTrend = document.getElementById("monthly-trend");
+      const refreshBtn = document.getElementById("refresh");
+      const notesForm = document.getElementById("notesForm");
+      const noteText = document.getElementById("noteText");
+      const notesList = document.getElementById("notesList");
+
+      const STORAGE_KEY = "zenith_doctor_notes";
+
+      function loadNotes() {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        notesList.innerHTML = "";
+        stored.forEach((note) => {
+          const li = document.createElement("li");
+          li.textContent = note;
+          notesList.appendChild(li);
+        });
+      }
+
+      notesForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const text = noteText.value.trim();
+        if (!text) return;
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        stored.unshift(text);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stored.slice(0, 5)));
+        noteText.value = "";
+        loadNotes();
+      });
+
+      refreshBtn.addEventListener("click", () => {
+        weeklyTrend.textContent = "Loading…";
+        monthlyTrend.textContent = "Loading…";
+        setTimeout(() => {
+          weeklyEl.textContent = "4";
+          monthlyEl.textContent = "12";
+          weeklyTrend.textContent = "+2 vs last week";
+          monthlyTrend.textContent = "-1 vs last month";
+        }, 300);
+      });
+
+      loadNotes();
+    </script>
+  </body>
+</html>
