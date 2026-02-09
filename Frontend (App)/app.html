@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Zenith Sleep - Mobile App</title>
     <link rel="stylesheet" href="app.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#0c3b4a" />
   </head>
   <body>
     <main class="phone">
       <header class="phone__top">
         <div class="brandline">
-          <img class="brandline__logo" src="../Zenith_logo.png" alt="Zenith Sleep logo" />
+          <img class="brandline__logo" src="../Zenith%20Sleep%20logo%20design.png" alt="Zenith Sleep logo" />
           <p class="eyebrow">Zenith Sleep</p>
           <h1>Live Safety Dashboard</h1>
         </div>
@@ -62,11 +64,15 @@
         <div class="alert__list" id="alertList"></div>
       </section>
 
-      <section class="card controls">
+    </main>
+
+    <aside class="sim-panel">
+      <div class="sim-panel__inner">
         <p class="label">Simulation controls</p>
         <div class="controls__grid">
           <button class="btn btn--ghost" id="triggerSleep">Trigger sleepwalk</button>
           <button class="btn btn--ghost" id="resolveSleep">Resolve sleepwalk</button>
+          <button class="btn btn--dark" id="triggerFall">Trigger fall</button>
           <button class="btn btn--ghost" id="resetCounts">Reset counters</button>
         </div>
         <div class="controls__grid">
@@ -79,8 +85,8 @@
           <button class="btn btn--ghost" data-speed="30">Speed 30x</button>
         </div>
         <p class="meta">Speed changes how fast escalation timers run.</p>
-      </section>
-    </main>
+      </div>
+    </aside>
 
     <div class="overlay" id="fallOverlay" hidden>
       <div class="overlay__card">
@@ -91,5 +97,10 @@
     </div>
 
     <script src="app.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js");
+      }
+    </script>
   </body>
 </html>

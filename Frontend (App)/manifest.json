@@ -1,0 +1,14 @@
+{
+  "name": "Zenith Sleep",
+  "short_name": "Zenith",
+  "start_url": "login.html",
+  "display": "standalone",
+  "background_color": "#eef5f6",
+  "theme_color": "#0c3b4a",
+  "icons": [
+    {
+      "src": "../Zenith%20Sleep%20logo%20design.png",
+      "type": "image/png"
+    }
+  ]
+}
