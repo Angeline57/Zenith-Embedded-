@@ -8,11 +8,12 @@ from collections import deque
 # ===================== Firebase (HTTP) =====================
 DB = "https://embedded-zenith-default-rtdb.firebaseio.com/"
 TIMESERIES_NODE = "timeseries"
-session = requests.Session()
+session = requests.Session()    # request a communication session for connection with firebase 
 
 UPLOAD_HZ = 1.0
 UPLOAD_PERIOD = 1.0 / UPLOAD_HZ
 
+# saves data with unique timestamp key (for historical record)
 def upload_timeseries(payload):
     ts_ms = int(payload["ts"] * 1000)
     path = f"{TIMESERIES_NODE}/{ts_ms}.json"
@@ -20,12 +21,13 @@ def upload_timeseries(payload):
     if not r.ok:
         raise ConnectionError(f"Timeseries write failed: {r.status_code} {r.text}")
 
+# saves data to /latest (overwrites previous, for easy retrieval of most recent state)
 def upload_latest(payload):
     r = session.put(DB + "latest.json", json=payload, timeout=5)
     if not r.ok:
         raise ConnectionError(f"Latest write failed: {r.status_code} {r.text}")
 
-# ===================== I2C setup =====================
+# ===================== I2C (communication protocol) setup =====================
 bus = smbus2.SMBus(1)
 
 # ---- 9DOF (NXP) ----
@@ -55,6 +57,7 @@ TMP006_REG_VOBJ = 0x00
 TMP006_REG_TDIE = 0x01
 
 # ===================== Scaling =====================
+# scaling factors tell the code how to convert the raw electrical signal into actual $9.8 m/s^2$ gravity units.
 ACC_COUNTS_PER_G = 4096.0
 G = 9.80665
 G0 = 9.80665
@@ -70,6 +73,8 @@ def write_u8(addr, reg, val):
 def read_block(addr, reg, length):
     return bus.read_i2c_block_data(addr, reg & 0xFF, length)
 
+# two's complement helper for signed values (e.g. accel/gyro readings) 
+# that come as unsigned integers from the sensor
 def twos_complement(val, bits):
     if val & (1 << (bits - 1)):
         val -= 1 << bits
@@ -107,6 +112,8 @@ def fxas_init():
     write_u8(FXAS_ADDR, FXAS_CTRL_REG1, 0x0E)  # active
     time.sleep(0.05)
 
+# FXOS: accel and mag on same chip, read together in one block read
+# the NXP 9-axis sensor system has this two chip system
 def fxos_read_accel_mps2():
     d = read_block(FXOS_ADDR, FXOS_OUT_X_MSB, 6)
     ax = twos_complement((d[0] << 8) | d[1], 16) >> 2
@@ -114,6 +121,7 @@ def fxos_read_accel_mps2():
     az = twos_complement((d[4] << 8) | d[5], 16) >> 2
     return (accel_raw_to_mps2(ax), accel_raw_to_mps2(ay), accel_raw_to_mps2(az))
 
+# FXAS: gyro on separate chip, read in its own block read
 def fxas_read_gyro_rads():
     d = read_block(FXAS_ADDR, FXAS_OUT_X_MSB, 6)
     gx = twos_complement((d[0] << 8) | d[1], 16)
@@ -160,11 +168,16 @@ FREEFALL_WINDOW_S = 0.35
 IMPACT_WINDOW_S = 0.8
 POST_STILL_WINDOW_S = 1.2
 
+# ===================== On-Person Detection Config =====================
+ambient_temp = 25.0  # Default starting value
+on_person_threshold = 30.0  # Dynamically changes to ambient + TEMP_OFFSET
+TEMP_OFFSET = 4.0    # How many degrees above room temp is "On Person"
+
 # States
 IDLE = 0
-FREEFALL = 1
-IMPACT = 2
-CONFIRM = 3
+FREEFALL = 1    # in freefall, acceleration is below 0.4g, waiting for impact
+IMPACT = 2      # detected impact (acceleration above 2.5g), waiting for stillness to confirm fall
+CONFIRM = 3     # checking for stillness after impact to confirm fall (gyro below 0.35 rad/s and accel variance below 0.2 (g^2) in 1.2s window)
 STATE_NAME = {IDLE: "IDLE", FREEFALL: "FREEFALL", IMPACT: "IMPACT", CONFIRM: "CONFIRM"}
 
 # ===================== Main =====================
@@ -212,6 +225,22 @@ def main():
     ts_tmp = None
 
     latest_payload = None
+
+    # --- CALIBRATION STEP ---
+    print("Calibrating ambient temperature... keep device on table.")
+    temp_samples = []
+    for _ in range(3):
+        try:
+            temp_samples.append(tmp006_read_die_temp_c())
+        except OSError:
+            pass
+        time.sleep(1)
+    
+    if temp_samples:
+        ambient_temp = sum(temp_samples) / len(temp_samples)
+        on_person_threshold = ambient_temp + TEMP_OFFSET
+        print(f"Calibration Done. Ambient: {ambient_temp:.1f}C. Threshold: {on_person_threshold:.1f}C")
+
 
     try:
         while True:
@@ -296,21 +325,32 @@ def main():
                 except OSError:
                     pass
 
-                # Build payload for upload (uses latest 50Hz IMU sample)
+                # Inside the 'if t >= next_slow_t:' block (Device on-person check using TMP006)
+                try:
+                    latest_tmp_die_c = round(float(tmp006_read_die_temp_c()), 3)
+                    
+                    # LOGIC: Check if it's on the person
+                    device_on_person = latest_tmp_die_c > on_person_threshold
+                    
+                    latest_tmp_vobj_uV = round(float(tmp006_read_vobj_uV()), 3)
+                    ts_tmp = time.time()
+                except OSError:
+                    device_on_person = False
+
+                # Build payload for upload
                 latest_payload = {
                     "sensor": "imu50_fall_tof1_tmp1",
                     "ts": time.time(),
+                    "device_on_person": bool(device_on_person), 
+                    "fall": bool(fall_status),
+                    "event": event,
+                    "fall_state": STATE_NAME[state],
 
-                    # IMU (latest sample)
+                    # IMU Data
                     "accel_mps2": {"x": round(ax, 4), "y": round(ay, 4), "z": round(az, 4)},
                     "gyro_rads": {"x": round(gx, 6), "y": round(gy, 6), "z": round(gz, 6)},
                     "a_g": round(a_g, 3),
                     "w_rads": round(w_mag, 3),
-
-                    # Fall detection status
-                    "fall": bool(fall_status),
-                    "event": event,
-                    "fall_state": STATE_NAME[state],
 
                     # ToF + Temperature
                     "tof_mm": latest_tof_mm,
@@ -318,7 +358,7 @@ def main():
                     "tmp_vobj_uV": latest_tmp_vobj_uV,
 
                     "meta": {
-                        "ts_imu": t,          # when IMU sample used was taken
+                        "ts_imu": t,
                         "ts_tof": ts_tof,
                         "ts_tmp": ts_tmp,
                         "rates_hz": {"imu": 50, "tof": 1, "tmp": 1, "upload": 1},
