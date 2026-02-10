@@ -9,7 +9,7 @@ To maintain patient privacy and database integrity, all cloud interactions are s
 * **OAuth2 Protocol:** Instead of using static API keys, the system exchanges service credentials for short-lived **OAuth2 tokens**.
 * **Scoped Permissions:** The backend is restricted to the `firebase.database` scope, ensuring it can only interact with the relevant Realtime Database nodes.
 
-## 📡 Communication Protocol: Why HTTP?
+## 📡 Communication Protocol
 While MQTT is common in IoT, SafeSleep utilizes **HTTP (REST)** for cloud synchronization for the following reasons:
 
 * **Stateless Reliability:** Given the critical nature of fall detection, HTTP's request-response pattern ensures that the backend explicitly acknowledges data receipt.
