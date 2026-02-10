@@ -22,6 +22,7 @@ This repository contains the **complete system**, including:
 ---
 
 ## System Architecture
+
 ┌───────────────────────┐      ┌───────────────────────┐      ┌───────────────────────┐
 │     [ EDGE LAYER ]    │      │    [ CLOUD LAYER ]    │      │    [ LOGIC LAYER ]    │
 │    (Raspberry Pi)     │      │(Firebase Realtime DB) │      │   (Remote Backend)    │
@@ -46,6 +47,36 @@ This repository contains the **complete system**, including:
                                │ • Live Alerts Display │
                                │ • JS Fetch (Polling)  │
                                └───────────────────────┘
+
+                               
+┌─────────────────────────────────────────────────────────────────────────┐
+│ SYSTEM OVERVIEW │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌───────────────────────┐ ┌───────────────────────┐ ┌───────────────────────┐
+│ EDGE LAYER │ │ CLOUD LAYER │ │ LOGIC LAYER │
+│ (Raspberry Pi) │ │ (Firebase Realtime DB)│ │ (Remote Backend) │
+├───────────────────────┤ ├───────────────────────┤ ├───────────────────────┤
+│ Path: /raspberry_pi │ │ Path: /database_hub │ │ Path: /backend │
+│ │ │ │ │ │
+│ • Sensor Data (I2C) │ PUT │ latest.json │ GET │ • OAuth2 Auth │
+│ • Fall Detection ├─────►│ ├─────►│ • Business Logic │
+│ • HTTP Client │ │ │ │ • Status Calculation │
+└───────────────────────┘ └──────────┬────────────┘ └───────────┬───────────┘
+│ │
+│ PATCH │
+│◄──────────────────────────────┘
+│ (update on_person flag)
+│
+▼
+┌────────────────────────┐
+│ PRESENTATION LAYER │
+│ Frontend │
+├────────────────────────┤
+│ • Web Dashboard UI │
+│ • Live Alerts │
+│ • JS Fetch (Polling) │
+└────────────────────────┘
 
 
 ## Repository Structure
