@@ -1,7 +1,7 @@
 # Zenith Sleep 
 ### Night Wandering & Fall Detection System for Alzheimer’s Patients
 
-![Product Screenshot](zenith_sleep_logo_design.png)
+<img src="zenith_sleep_logo_design.png" alt="Zenith Sleep Logo" width="300">
 
 ## Project Overview
 
