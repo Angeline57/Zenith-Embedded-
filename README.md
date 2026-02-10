@@ -48,36 +48,34 @@ This repository contains the **complete system**, including:
                                │ • JS Fetch (Polling)  │
                                └───────────────────────┘
 
-                               
-┌─────────────────────────────────────────────────────────────────────────┐
-│ SYSTEM OVERVIEW │
-└─────────────────────────────────────────────────────────────────────────┘
+ ## System Architecture
 
-┌───────────────────────┐ ┌───────────────────────┐ ┌───────────────────────┐
-│ EDGE LAYER │ │ CLOUD LAYER │ │ LOGIC LAYER │
-│ (Raspberry Pi) │ │ (Firebase Realtime DB)│ │ (Remote Backend) │
-├───────────────────────┤ ├───────────────────────┤ ├───────────────────────┤
-│ Path: /raspberry_pi │ │ Path: /database_hub │ │ Path: /backend │
-│ │ │ │ │ │
-│ • Sensor Data (I2C) │ PUT │ latest.json │ GET │ • OAuth2 Auth │
-│ • Fall Detection ├─────►│ ├─────►│ • Business Logic │
-│ • HTTP Client │ │ │ │ • Status Calculation │
-└───────────────────────┘ └──────────┬────────────┘ └───────────┬───────────┘
-│ │
-│ PATCH │
-│◄──────────────────────────────┘
-│ (update on_person flag)
-│
-▼
-┌────────────────────────┐
-│ PRESENTATION LAYER │
-│ Frontend │
-├────────────────────────┤
-│ • Web Dashboard UI │
-│ • Live Alerts │
-│ • JS Fetch (Polling) │
-└────────────────────────┘
-
+```text
+  ┌───────────────────────┐      ┌───────────────────────┐      ┌───────────────────────┐
+  │     [ EDGE LAYER ]    │      │    [ CLOUD LAYER ]    │      │    [ LOGIC LAYER ]    │
+  │    (Raspberry Pi)     │      │(Firebase Realtime DB) │      │   (Remote Backend)    │
+  ├───────────────────────┤      ├───────────────────────┤      ├───────────────────────┤
+  │    /raspberry_pi      │      │    /database_hub      │      │       /backend        │
+  │                       │      │                       │      │                       │
+  │ • Sensor Data (I2C)   │ PUT  │    ┌─────────────┐    │ GET  │ • OAuth2 Auth Session │
+  │ • Fall Detection Logic├─────►│    │ latest.json │    ├─────►│ • Process Logic       │
+  │ • HTTP Client         │      │    └─────────────┘    │      │ • Status Calculation  │
+  └───────────────────────┘      └──────────┬────────────┘      └───────────┬───────────┘
+                                            │                               │
+                                            │            PATCH              │
+                                            │◄──────────────────────────────┘
+                                            │    (Updates 'on_person' key)
+                                            │
+                                            ▼
+                                ┌───────────────────────┐
+                                │  [ PRESENTATION ]     │
+                                │      /frontend        │
+                                ├───────────────────────┤
+                                │ • Web Dashboard UI    │
+                                │ • Live Alerts Display │
+                                │ • JS Fetch (Polling)  │
+                                └───────────────────────┘
+```
 
 ## Repository Structure
 
