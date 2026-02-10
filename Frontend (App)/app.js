@@ -4,6 +4,10 @@ const statusDot = document.getElementById("statusDot");
 const weeklyCount = document.getElementById("weeklyCount");
 const monthlyCount = document.getElementById("monthlyCount");
 const doctorNotes = document.getElementById("doctorNotes");
+const notesEmpty = document.getElementById("notesEmpty");
+const notesForm = document.getElementById("notesForm");
+const noteText = document.getElementById("noteText");
+const clearNotes = document.getElementById("clearNotes");
 const alertEmpty = document.getElementById("alertEmpty");
 const alertList = document.getElementById("alertList");
 const triggerSleep = document.getElementById("triggerSleep");
@@ -31,6 +35,8 @@ let lastSimTs = 0;
 
 const FIREBASE_DB = "https://embedded-zenith-default-rtdb.firebaseio.com";
 const LATEST_URL = `${FIREBASE_DB}/latest.json`;
+const NOTES_KEY = "zenith_shared_notes";
+const COUNTS_KEY = "zenith_sleepwalk_counts";
 
 const escalation = {
   sleepwalkNotice: "Sleepwalking detected. Monitoring closely.",
@@ -116,22 +122,19 @@ function randomInt(min, max) {
 }
 
 function updateMockStats() {
+  localStorage.setItem(
+    COUNTS_KEY,
+    JSON.stringify({ weekly: weeklyTotal, monthly: monthlyTotal })
+  );
   weeklyCount.textContent = weeklyTotal;
   monthlyCount.textContent = monthlyTotal;
 
   doctorNotes.innerHTML = "";
-  const stored = JSON.parse(localStorage.getItem("zenith_doctor_notes") || "[]");
-  const notes = stored.length
-    ? stored
-    : [
-        "Patient reported mild restlessness at 2:10 AM.",
-        "No fall incidents in the last 48 hours.",
-        "Caregiver noted improved bedtime routine compliance.",
-        "Follow-up recommended after 7 nights of monitoring.",
-      ];
-  notes.forEach((note) => {
+  const stored = JSON.parse(localStorage.getItem(NOTES_KEY) || "[]");
+  notesEmpty.style.display = stored.length ? "none" : "block";
+  stored.forEach((note) => {
     const item = document.createElement("li");
-    item.textContent = note;
+    item.textContent = `${note.author}: ${note.text}`;
     doctorNotes.appendChild(item);
   });
 }
@@ -225,6 +228,33 @@ updateMockStats();
 setStatus("Normal", "No alerts in the last hour.", "#3fc06a");
 setDeviceStatus(true);
 
+function loadCounts() {
+  const stored = JSON.parse(localStorage.getItem(COUNTS_KEY) || "{}");
+  if (Number.isFinite(stored.weekly)) weeklyTotal = stored.weekly;
+  if (Number.isFinite(stored.monthly)) monthlyTotal = stored.monthly;
+  updateMockStats();
+}
+
+if (notesForm) {
+  notesForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const text = noteText.value.trim();
+    if (!text) return;
+    const stored = JSON.parse(localStorage.getItem(NOTES_KEY) || "[]");
+    stored.unshift({ author: "Caregiver", text });
+    localStorage.setItem(NOTES_KEY, JSON.stringify(stored.slice(0, 8)));
+    noteText.value = "";
+    updateMockStats();
+  });
+}
+
+if (clearNotes) {
+  clearNotes.addEventListener("click", () => {
+    localStorage.removeItem(NOTES_KEY);
+    updateMockStats();
+  });
+}
+
 function applySimCommand(command) {
   if (!command || !command.type) return;
   switch (command.type) {
@@ -239,6 +269,14 @@ function applySimCommand(command) {
       break;
     case "resetCounts":
       weeklyTotal = 0;
+      monthlyTotal = 0;
+      updateMockStats();
+      break;
+    case "resetWeekly":
+      weeklyTotal = 0;
+      updateMockStats();
+      break;
+    case "resetMonthly":
       monthlyTotal = 0;
       updateMockStats();
       break;
@@ -298,3 +336,4 @@ async function pollLatest() {
 pollFirebase();
 setInterval(checkSimCommands, 500);
 checkSimCommands();
+loadCounts();

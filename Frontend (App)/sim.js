@@ -25,6 +25,14 @@ document.getElementById("resetCounts").addEventListener("click", () => {
   sendCommand("resetCounts");
 });
 
+document.getElementById("resetWeekly").addEventListener("click", () => {
+  sendCommand("resetWeekly");
+});
+
+document.getElementById("resetMonthly").addEventListener("click", () => {
+  sendCommand("resetMonthly");
+});
+
 document.getElementById("deviceOn").addEventListener("click", () => {
   sendCommand("deviceOn");
 });

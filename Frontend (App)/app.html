@@ -16,7 +16,7 @@
           <p class="eyebrow">Zenith Sleep</p>
           <h1>Live Safety Dashboard</h1>
         </div>
-        <div class="pill">Mock data</div>
+        
       </header>
 
       <section class="card status">
@@ -56,6 +56,18 @@
           <p class="meta">Care team observations</p>
         </div>
         <ul class="notes" id="doctorNotes"></ul>
+        <p class="meta notes__empty" id="notesEmpty">No notes yet.</p>
+        <form class="notes-form" id="notesForm">
+          <textarea
+            class="notes-input"
+            id="noteText"
+            rows="2"
+            placeholder="Send a note to the doctor..."
+            required
+          ></textarea>
+          <button class="btn btn--ghost" type="submit">Send note</button>
+          <button class="btn btn--ghost" type="button" id="clearNotes">Clear all notes</button>
+        </form>
       </section>
 
       <section class="card alerts" id="alertCard">

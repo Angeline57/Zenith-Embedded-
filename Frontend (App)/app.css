@@ -146,6 +146,7 @@ h1 {
   gap: 12px;
 }
 
+
 .value {
   font-size: 2rem;
   margin: 0;
@@ -165,6 +166,23 @@ h1 {
   padding: 10px 12px;
   font-size: 0.9rem;
   color: var(--ink-soft);
+}
+
+.notes__empty {
+  margin-top: 10px;
+}
+
+.notes-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.notes-input {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(10, 45, 57, 0.2);
+  font-size: 0.9rem;
 }
 
 .alert__empty {
