@@ -1,8 +1,9 @@
 # Zenith Sleep 
 ### Night Wandering & Fall Detection System for Alzheimer’s Patients
 
-<img src="zenith_sleep_logo_design.png" alt="Zenith Sleep Logo" width="300">
-
+<div align="center">
+  <img src="zenith-sleep-logo.png" alt="Zenith Sleep Logo" width="600">
+</div>
 ## Project Overview
 
 Zenith Sleep is an Internet-of-Things (IoT) system designed to monitor
