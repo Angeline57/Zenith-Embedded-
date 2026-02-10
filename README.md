@@ -2,8 +2,9 @@
 ### Night Wandering & Fall Detection System for Alzheimer’s Patients
 
 <div align="center">
-  <img src="zenith-sleep-logo.png" alt="Zenith Sleep Logo" width="600">
+  <img src="zenith_sleep_logo_design.png" alt="Zenith Sleep Logo" width="600">
 </div>
+
 ## Project Overview
 
 Zenith Sleep is an Internet-of-Things (IoT) system designed to monitor
@@ -21,38 +22,29 @@ This repository contains the **complete system**, including:
 ---
 
 ## System Architecture
-┌────────────────────┐
-│ Sensors │
-│ • 9DOF IMU │
-│ • Time-of-Flight │
-└─────────┬──────────┘
-│
-▼
-┌────────────────────┐
-│ Raspberry Pi │
-│ Embedded Python │
-│ - Sensor fusion │
-│ - Fall detection │
-│ - Wandering logic │
-└─────────┬──────────┘
-│
-▼
-┌────────────────────┐
-│ Cloud Backend │
-│ Firebase / MQTT │
-│ - Data storage │
-│ - Remote access │
-└─────────┬──────────┘
-│
-▼
-┌────────────────────┐
-│ Frontend Web UI │
-│ Marketing + Dashboard│
-│ - Status display │
-│ - Alerts │
-└────────────────────┘
-
----
+      [ EDGE LAYER ]              [ CLOUD LAYER ]             [ LOGIC LAYER ]
+      (Raspberry Pi)          (Firebase Realtime DB)         (Remote Backend)
+   ┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
+   │  /raspberry_pi   │        │     latest.json  │        │     /backend     │
+   │ ──────────────── │        │ ──────────────── │        │ ──────────────── │
+   │ • Sensor Data    │        │ {                │        │ • Auth Session   │
+   │ • Fall Detection │  PUT   │   "tmp_die_c": 32│  GET   │ • Process Logic  │
+   │ • HTTP Client    ├───────►│   "fall": false, ◄────────┤ • Status Calc    │
+   └──────────────────┘        │   "on_person": T │        └────────┬─────────┘
+                               │ }                │                 │
+                               └────────┬─────────┘           PATCH │
+                                        │        (Updates 'on_person' status)
+                                        │
+                                        │ GET (Polling)
+                                        ▼
+                               ┌──────────────────┐
+                               │    /frontend     │
+                               │ ──────────────── │
+                               │ • Web Dashboard  │
+                               │ • Live Alerts    │
+                               │ • HTML/JS/CSS    │
+                               └──────────────────┘
+                                [ PRESENTATION ]
 
 ## Repository Structure
 
