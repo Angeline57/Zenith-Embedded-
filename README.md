@@ -62,7 +62,7 @@ Zenith Sleep/
 ---
 
 ## 🛡️ Security & Authentication 
-This system implements a multi-tier security model; the [backend](./backend) utilizes OAuth2 Service Accounts for server-side database integrity, while the /frontend dashboard uses Firebase Authentication to ensure that only authorized caregivers can access private patient telemetry. Component-specific security design and implementation details are documented in the corresponding README files for each subsystem.
+This system implements a multi-tier security model; the [backend](./backend) utilizes OAuth2 Service Accounts for server-side database integrity, while the [frontend](./frontend) dashboard uses Firebase Authentication to ensure that only authorized caregivers can access private patient telemetry. Component-specific security design and implementation details are documented in the corresponding README files for each subsystem.
 
 ---
 
