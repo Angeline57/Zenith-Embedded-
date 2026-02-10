@@ -22,29 +22,31 @@ This repository contains the **complete system**, including:
 ---
 
 ## System Architecture
-      [ EDGE LAYER ]              [ CLOUD LAYER ]             [ LOGIC LAYER ]
-      (Raspberry Pi)          (Firebase Realtime DB)         (Remote Backend)
-   ┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
-   │  /raspberry_pi   │        │     latest.json  │        │     /backend     │
-   │ ──────────────── │        │ ──────────────── │        │ ──────────────── │
-   │ • Sensor Data    │        │ {                │        │ • Auth Session   │
-   │ • Fall Detection │  PUT   │   "tmp_die_c": 32│  GET   │ • Process Logic  │
-   │ • HTTP Client    ├───────►│   "fall": false, ◄────────┤ • Status Calc    │
-   └──────────────────┘        │   "on_person": T │        └────────┬─────────┘
-                               │ }                │                 │
-                               └────────┬─────────┘           PATCH │
-                                        │        (Updates 'on_person' status)
-                                        │
-                                        │ GET (Polling)
-                                        ▼
-                               ┌──────────────────┐
-                               │    /frontend     │
-                               │ ──────────────── │
-                               │ • Web Dashboard  │
-                               │ • Live Alerts    │
-                               │ • HTML/JS/CSS    │
-                               └──────────────────┘
-                                [ PRESENTATION ]
+┌───────────────────────┐      ┌───────────────────────┐      ┌───────────────────────┐
+│     [ EDGE LAYER ]    │      │    [ CLOUD LAYER ]    │      │    [ LOGIC LAYER ]    │
+│    (Raspberry Pi)     │      │(Firebase Realtime DB) │      │   (Remote Backend)    │
+├───────────────────────┤      ├───────────────────────┤      ├───────────────────────┤
+│    /raspberry_pi      │      │     /database_hub     │      │       /backend        │
+│                       │      │                       │      │                       │
+│ • Sensor Data (I2C)   │ PUT  │    ┌─────────────┐    │ GET  │ • OAuth2 Auth Session │
+│ • Fall Detection Logic├─────►│    │ latest.json │    ├─────►│ • Process Logic       │
+│ • HTTP Client         │      │    └─────────────┘    │      │ • Status Calculation  │
+└───────────────────────┘      └──────────┬────────────┘      └───────────┬───────────┘
+                                          │                               │
+                                          │            PATCH              │
+                                          │◄──────────────────────────────┘
+                                          │    (Updates 'on_person' key)
+                                          │
+                                          ▼
+                               ┌───────────────────────┐
+                               │  [ PRESENTATION ]     │
+                               │      /frontend        │
+                               ├───────────────────────┤
+                               │ • Web Dashboard UI    │
+                               │ • Live Alerts Display │
+                               │ • JS Fetch (Polling)  │
+                               └───────────────────────┘
+
 
 ## Repository Structure
 
