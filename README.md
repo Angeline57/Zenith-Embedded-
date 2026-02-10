@@ -1,7 +1,7 @@
 # Zenith Sleep 
 ### Night Wandering & Fall Detection System for Alzheimer’s Patients
 
-![Product Screenshot](Zenith Sleep logo design.png)
+![Product Screenshot](zenith_sleep_logo_design.png)
 
 ## Project Overview
 
@@ -15,6 +15,7 @@ This repository contains the **complete system**, including:
 - Embedded sensor acquisition and processing
 - Backend communication and data storage
 - Frontend user interface and marketing website
+
 
 ---
 
