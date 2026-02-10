@@ -170,9 +170,9 @@ UPRIGHT_G_MIN = 0.85         # g
 UPRIGHT_G_MAX = 1.25         # g
 UPRIGHT_GYRO_MIN = 0.12      # rad/s
 
-WALK_GYRO_MIN = 0.1         # rad/s
+WALK_GYRO_MIN = 0.18         # rad/s
 WALK_GYRO_MAX = 1.6          # rad/s
-WALK_VAR_MIN  = 0.02         # (m/s^2)^2
+WALK_VAR_MIN  = 0.05         # (m/s^2)^2
 WALK_MIN_TIME = 5.0         # seconds
 
 SLEEPWALK_CONFIRM_TIME = 10.0 # seconds
