@@ -21,33 +21,6 @@ This repository contains the **complete system**, including:
 
 ---
 
-## System Architecture
-
-┌───────────────────────┐      ┌───────────────────────┐      ┌───────────────────────┐
-│     [ EDGE LAYER ]    │      │    [ CLOUD LAYER ]    │      │    [ LOGIC LAYER ]    │
-│    (Raspberry Pi)     │      │(Firebase Realtime DB) │      │   (Remote Backend)    │
-├───────────────────────┤      ├───────────────────────┤      ├───────────────────────┤
-│    /raspberry_pi      │      │     /database_hub     │      │       /backend        │
-│                       │      │                       │      │                       │
-│ • Sensor Data (I2C)   │ PUT  │    ┌─────────────┐    │ GET  │ • OAuth2 Auth Session │
-│ • Fall Detection Logic├─────►│    │ latest.json │    ├─────►│ • Process Logic       │
-│ • HTTP Client         │      │    └─────────────┘    │      │ • Status Calculation  │
-└───────────────────────┘      └──────────┬────────────┘      └───────────┬───────────┘
-                                          │                               │
-                                          │            PATCH              │
-                                          │◄──────────────────────────────┘
-                                          │    (Updates 'on_person' key)
-                                          │
-                                          ▼
-                               ┌───────────────────────┐
-                               │  [ PRESENTATION ]     │
-                               │      /frontend        │
-                               ├───────────────────────┤
-                               │ • Web Dashboard UI    │
-                               │ • Live Alerts Display │
-                               │ • JS Fetch (Polling)  │
-                               └───────────────────────┘
-
  ## System Architecture
 
 ```text
@@ -79,60 +52,17 @@ This repository contains the **complete system**, including:
 
 ## Repository Structure
 
-SafeSleep/
+Zenith Sleep/
 ├── embedded/ # Raspberry Pi sensor acquisition & processing
 ├── backend/ # Cloud communication & database logic
 ├── frontend/ # Web-based UI and marketing website
-├── docs/ # Coursework documentation and diagrams
 └── README.md # Main project documentation
 
 
 ---
 
-## Subsystems Description
-
-### Embedded System (Raspberry Pi)
-
-- Interfaces with:
-  - 9DOF inertial measurement unit (IMU)
-  - Time-of-Flight distance sensor
-- Performs:
-  - Motion analysis
-  - Fall detection
-  - Bed exit and wandering detection
-- Outputs **processed, high-level states**
-  rather than raw sensor data
-
----
-
-### Backend & Cloud Communication
-
-- Uses:
-  - MQTT for message passing
-  - HTTP (REST) for database interaction
-- Stores processed sensor data in a cloud database
-- Enables remote monitoring and scalability
-
-The backend abstracts the embedded system from the frontend,
-allowing independent development of both components.
-
----
-
-### Frontend (Web Interface)
-
-Located in the `frontend/` directory.
-
-The frontend is a **single-page web application** that serves two roles:
-1. **Marketing website** explaining the product concept
-2. **Live monitoring dashboard** for caregivers
-
-Key features:
-- Displays patient state (sleeping, wandering, fall detected)
-- Clear alert messages for critical events
-- Designed for clarity and non-technical users
-
-Mock data mode is supported to allow development before backend
-integration.
+## 🛡️ Security & Authentication 
+This system implements a multi-tier security model; the /backend utilizes OAuth2 Service Accounts for server-side database integrity, while the /frontend dashboard uses Firebase Authentication to ensure that only authorized caregivers can access private patient telemetry. Component-specific security design and implementation details are documented in the corresponding README files for each subsystem.
 
 ---
 
@@ -140,7 +70,7 @@ integration.
 
 - **Python** – Embedded processing and backend logic
 - **Raspberry Pi** – Edge computing platform
-- **MQTT / HTTP** – Device-to-cloud communication
+- **HTTP** – Device-to-cloud communication
 - **Firebase Realtime Database** – Cloud storage
 - **HTML / CSS / JavaScript** – Frontend user interface
 
@@ -168,7 +98,7 @@ at **Imperial College London**.
 
 The system demonstrates:
 - Embedded sensor interfacing
-- IoT communication using MQTT and HTTP
+- IoT communication using HTTP
 - Cloud-based data storage
 - User interface design for real-world applications
 - Consideration of usability and scalability
