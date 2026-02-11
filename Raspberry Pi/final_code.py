@@ -1,24 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Raspberry Pi wearable node (bench/desk-test friendly)
+Final code
 
-What this script does:
-- Reads IMU (FXOS8700 accel + FXAS21002 gyro) at 50 Hz
-- Runs two detectors on the IMU stream:
-  1) Fall detection (freefall -> impact -> stillness confirm)
-  2) Sleepwalking detection (AWAKE -> ASLEEP -> MOBILE -> SLEEPWALKING)
-     This is the desk/hand-tested version that triggers while you're moving,
-     not only after you put the device down.
-- Reads TMP006 temperature at 1 Hz
-- Uploads a single combined payload to Firebase RTDB at 1 Hz:
-  - /timeseries/<epoch_ms>
-  - /latest
-
-Important knobs:
-- For desk testing, set:
-  SLEEP_MIN_TIME = 15.0
-  SLEEPWALK_CONFIRM_TIME = 5.0 to 8.0
-- For realistic deployment, put them back to minutes/30s.
+9 DOF + temp
+Sleepwaling + fall detection
+http-> firebase
 """
 
 import time
@@ -28,7 +14,7 @@ from collections import deque
 from google.oauth2 import service_account
 from google.auth.transport.requests import AuthorizedSession
 
-# ===================== Firebase (authenticated HTTP) =====================
+# Firebase HTTP
 DB = "https://embedded-zenith-default-rtdb.firebaseio.com/"
 TIMESERIES_NODE = "timeseries"
 
@@ -41,8 +27,8 @@ SCOPES = [
 credentials = service_account.Credentials.from_service_account_file(KEYFILE, scopes=SCOPES)
 session = AuthorizedSession(credentials)
 
-UPLOAD_HZ = 1.0
-UPLOAD_PERIOD = 1.0 / UPLOAD_HZ
+ 
+UPLOAD_PERIOD = 1.0 
 
 
 def upload_timeseries(payload: dict) -> None:
@@ -61,12 +47,12 @@ def upload_latest(payload: dict) -> None:
         raise ConnectionError(f"Latest write failed: {r.status_code} {r.text}")
 
 
-# ===================== I2C setup =====================
+# I2C setup 
 bus = smbus2.SMBus(1)
 
-# ---- 9DOF (NXP) ----
-FXOS_ADDR = 0x1F   # accel + mag (try 0x1E if not found)
-FXAS_ADDR = 0x21   # gyro       (try 0x20 if not found)
+#  9DOF (NXP) 
+FXOS_ADDR = 0x1F   # accel 
+FXAS_ADDR = 0x21   # gyro   
 
 # FXOS8700 registers
 FXOS_WHOAMI = 0x0D
@@ -81,19 +67,19 @@ FXAS_CTRL_REG0 = 0x0D
 FXAS_CTRL_REG1 = 0x13
 FXAS_OUT_X_MSB = 0x01
 
-# ---- TMP006 temperature sensor ----
-TMP006_ADDR = 0x40  # default (alt 0x41)
+#  TMP006 temperature sensor 
+TMP006_ADDR = 0x40  # 
 TMP006_REG_VOBJ = 0x00
 TMP006_REG_TDIE = 0x01
 
-# ===================== Scaling =====================
+# Scaling for units
 ACC_COUNTS_PER_G = 4096.0
 G = 9.80665
 G0 = 9.80665
 GYRO_COUNTS_PER_DPS = 16.4
 
 
-# ===================== Low-level I2C helpers =====================
+# I2C helpers 
 def read_u8(addr, reg):
     return bus.read_byte_data(addr, reg & 0xFF)
 
@@ -112,7 +98,7 @@ def twos_complement(val, bits):
     return val
 
 
-# ===================== Math helpers =====================
+# Math helpers/ converstions
 def accel_raw_to_mps2(raw):
     return (raw / ACC_COUNTS_PER_G) * G
 
@@ -132,7 +118,7 @@ def variance(vals):
     return sum((v - m) ** 2 for v in vals) / (len(vals) - 1)
 
 
-# ===================== IMU init + reads =====================
+#  IMU init + reads 
 def fxos_init():
     # Put accel in standby before config
     ctrl1 = read_u8(FXOS_ADDR, FXOS_CTRL_REG1)
@@ -177,7 +163,7 @@ def fxas_read_gyro_rads():
     return (gyro_raw_to_rads(gx), gyro_raw_to_rads(gy), gyro_raw_to_rads(gz))
 
 
-# ===================== TMP006 reads =====================
+# TMP006 reads 
 def tmp006_read_u16(reg):
     d = bus.read_i2c_block_data(TMP006_ADDR, reg & 0xFF, 2)
     return (d[0] << 8) | d[1]
@@ -196,8 +182,9 @@ def tmp006_read_vobj_uV():
     return signed * 0.15625
 
 
-# ===================== Fall detection parameters =====================
+# Fall detection parameters 
 # Freefall -> impact -> confirm stillness
+
 FREEFALL_G_MAX = 0.4
 IMPACT_G_MIN = 2.5
 POST_STILL_GYRO_MAX = 0.35
@@ -213,24 +200,21 @@ CONFIRM = 3
 FALL_STATE_NAME = {IDLE: "IDLE", FREEFALL: "FREEFALL", IMPACT: "IMPACT", CONFIRM: "CONFIRM"}
 
 
-# ===================== Sleepwalking parameters (desk/hand-tested logic) =====================
-# "Asleep" = long-window stillness (gyro mean small + a_g variance small)
+# Sleepwalking parameters 
 SLEEP_GYRO_MAX = 0.12
 SLEEP_VAR_MAX = 0.0060      # var(a_g) in g^2
 SLEEP_MIN_TIME = 12 * 60    # set to 15.0 for desk testing
 
-# "Mobile after sleep" = short-window movement (either gyro or variance rises)
 MOBILE_GYRO_MIN = 0.18
 MOBILE_VAR_MIN = 0.0080     # g^2
 
-# "Walking-like" = short-window, sustained movement in a reasonable band
-# No strict upright gate here (desk testing tends to violate a_g band when you move it by hand)
+
 WALK_GYRO_MIN = 0.22
 WALK_GYRO_MAX = 3.0
-WALK_VAR_MIN = 0.0120       # g^2
+WALK_VAR_MIN = 0.0120      
 
-SW_WALK_WINDOW_S = 1.5      # seconds (responsive)
-SLEEPWALK_CONFIRM_TIME = 30.0  # set to 5.0-8.0 for desk testing
+SW_WALK_WINDOW_S = 1.5     
+SLEEPWALK_CONFIRM_TIME = 30.0  
 
 SW_AWAKE = 0
 SW_ASLEEP = 1
@@ -246,7 +230,6 @@ SW_STATE_NAME = {
 
 # ===================== Main =====================
 def main():
-    # Quick sanity check: do we see the devices?
     try:
         print(f"FXOS WHOAMI: 0x{read_u8(FXOS_ADDR, FXOS_WHOAMI):02X}")
         print(f"FXAS WHOAMI: 0x{read_u8(FXAS_ADDR, FXAS_WHOAMI):02X}")
@@ -262,20 +245,20 @@ def main():
     print("\nRunning: IMU 50Hz | fall + sleepwalking | TMP006 1Hz | Firebase upload 1Hz")
     print(f"DB: {DB}\n")
 
-    # ---- Timing ----
+    # Timing 
     sample_hz = 50.0
     dt = 1.0 / sample_hz
     next_sample_t = time.time()
     next_slow_t = time.time()  # 1 Hz tasks: temp + upload
 
-    # ---- Fall detector state ----
+    # Fall detector state 
     fall_state = IDLE
     fall_t_state = time.time()
     fall_a_mag_buf = deque(maxlen=int(POST_STILL_WINDOW_S * sample_hz))
     fall_w_mag_buf = deque(maxlen=int(POST_STILL_WINDOW_S * sample_hz))
     cooldown_until = 0.0
 
-    # ---- Sleepwalking state + buffers ----
+    # Sleepwalking state + buffers 
     SW_SLEEP_WINDOW_S = 20.0
     sw_sleep_ag_buf = deque(maxlen=int(SW_SLEEP_WINDOW_S * sample_hz))
     sw_sleep_w_buf = deque(maxlen=int(SW_SLEEP_WINDOW_S * sample_hz))
@@ -288,7 +271,7 @@ def main():
     walk_start_t = None
     sleepwalking_event = "NONE"
 
-    # ---- TMP006 cached values ----
+    #  TMP006 cached values
     latest_tmp_die_c = None
     latest_tmp_vobj_uV = None
     ts_tmp = None
@@ -302,7 +285,7 @@ def main():
             next_sample_t += dt
             t = time.time()
 
-            # ===== IMU read @ 50 Hz =====
+            # read IMU
             ax, ay, az = fxos_read_accel_mps2()
             gx, gy, gz = fxas_read_gyro_rads()
 
@@ -310,16 +293,16 @@ def main():
             a_g = a_mag / G0
             w_mag = mag3(gx, gy, gz)
 
-            # ==========================================================
-            # Sleepwalking detector (runs every IMU sample)
-            # ==========================================================
+        
+            # Sleepwalking detector (runs @50hz)
+            
             sleepwalking_event = "NONE"
 
-            # Feed long-window buffers (for stillness detection)
+            #  buffers (for stillness detection)
             sw_sleep_ag_buf.append(a_g)
             sw_sleep_w_buf.append(w_mag)
 
-            # Feed short-window buffers (for movement + walking-like detection)
+            #  short-window buffers (for movement + walking-like detection)
             sw_walk_ag_buf.append(a_g)
             sw_walk_w_buf.append(w_mag)
 
@@ -358,7 +341,7 @@ def main():
                     walk_start_t = None
 
             elif sw_state == SW_MOBILE:
-                # If we go quiet again for a bit, treat it like "back asleep"
+                # if still go back to sleep
                 if is_still:
                     if still_start_t is None:
                         still_start_t = t
@@ -368,7 +351,7 @@ def main():
                 else:
                     still_start_t = None
 
-                # Confirm sleepwalking only while walking-like is continuously true
+                # Confirm sleepwalking while walking is true
                 if walking_like:
                     if walk_start_t is None:
                         walk_start_t = t
@@ -391,15 +374,15 @@ def main():
 
             sleepwalking_flag = (sw_state == SW_SLEEPWALKING)
 
-            # ==========================================================
-            # Fall detector (runs every IMU sample)
-            # ==========================================================
+  
+            # Fall detector (runs @50hertz)
+      
             fall_event = "NONE"
 
             fall_a_mag_buf.append(a_mag)
             fall_w_mag_buf.append(w_mag)
 
-            # Cooldown makes the "fall" alarm sticky for a short time
+            # make fall alram for 2 seconds
             if t < cooldown_until:
                 fall_state = IDLE
 
@@ -436,13 +419,13 @@ def main():
 
             fall_status = (t < cooldown_until)
 
-            # ==========================================================
+       
             # 1 Hz block: temperature read + upload
-            # ==========================================================
+           
             if t >= next_slow_t:
                 next_slow_t += 1.0
 
-                # Temperature read (best effort)
+                # Temperature read 
                 try:
                     latest_tmp_die_c = round(float(tmp006_read_die_temp_c()), 3)
                     latest_tmp_vobj_uV = round(float(tmp006_read_vobj_uV()), 3)
