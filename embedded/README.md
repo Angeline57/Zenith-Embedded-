@@ -1,8 +1,8 @@
-# 📟 Embedded System (Raspberry Pi Layer)
+# Embedded System (Raspberry Pi Layer)
 
 The Embedded Layer acts as the "Intelligent Edge" of the SafeSleep system. It is responsible for real-time sensor fusion and safety-critical decision-making.
 
-## 📡 Sensor Integration
+## Sensor Integration
 The system utilizes two primary sensors interfaced via the **I2C protocol**:
 
 * **9DOF IMU (LSM9DS1):** Combines a 3-axis accelerometer, gyroscope, and magnetometer. This provides the raw motion data required to track orientation and sudden impacts.
@@ -10,7 +10,7 @@ The system utilizes two primary sensors interfaced via the **I2C protocol**:
 
 
 
-## 🧠 Edge Processing vs. Cloud Latency
+## Edge Processing vs. Cloud Latency
 A core architectural decision of SafeSleep is performing **Fall Detection locally on the Raspberry Pi** rather than in the cloud.
 
 ### The Frequency Challenge
@@ -20,12 +20,12 @@ A core architectural decision of SafeSleep is performing **Fall Detection locall
 
 
 
-## 🛠️ Local Logic & Detection
+## Local Logic & Detection
 1.  **Motion Analysis:** Filters raw noise from the IMU to distinguish between normal sleep movements and abnormal events.
 2.  **Fall Detection:** Utilizes a threshold-based algorithm that triggers when a specific G-force magnitude is followed by a sudden change in orientation.
 3.  **Bed Exit & Wandering:** Combines ToF distance data and motion trends to determine if the patient has safely left the bed or is wandering in an unsafe state.
 
-## 🚀 How to Run
+## How to Run
 1. Connect sensors to the Pi's GPIO pins (SDA/SCL).
 2. Install libraries: `pip install adafruit-circuitpython-lsm9ds1 adafruit-circuitpython-vl53l1x`
 3. Run the acquisition script: `python pi_main.py`
