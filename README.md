@@ -1,9 +1,11 @@
-# 🛡️ SafeSleep  
+# Zenith Sleep 
 ### Night Wandering & Fall Detection System for Alzheimer’s Patients
+
+![Product Screenshot](zenith_sleep_logo_design.png)
 
 ## Project Overview
 
-SafeSleep is an Internet-of-Things (IoT) system designed to monitor
+Zenith Sleep is an Internet-of-Things (IoT) system designed to monitor
 **night wandering and fall events** in Alzheimer’s patients.
 The system combines embedded sensing, cloud communication, and a
 web-based user interface to provide **real-time caregiver awareness**
@@ -13,6 +15,7 @@ This repository contains the **complete system**, including:
 - Embedded sensor acquisition and processing
 - Backend communication and data storage
 - Frontend user interface and marketing website
+
 
 ---
 
