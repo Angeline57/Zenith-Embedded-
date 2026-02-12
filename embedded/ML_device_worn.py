@@ -39,13 +39,12 @@ LATEST_URL = DB + "latest.json"
 # Simple logistic regression: p = sigmoid(b0 + b1*temp + b2*mean + b3*slope)
 # Replace with your trained weights.
 MODEL = {
-    "b0": -12.0,
-    "b1": 0.35,   # temp
-    "b2": 0.15,   # mean temp
-    "b3": 2.0,    # slope (deg C per sec)
+    "b0": -3.821346,
+    "b1": 1.776240,
+    "b2": -1.725786,
+    "b3": 0.232956,
     "threshold": 0.5,
 }
-
 
 def sigmoid(x: float) -> float:
     return 1.0 / (1.0 + pow(2.718281828, -x))

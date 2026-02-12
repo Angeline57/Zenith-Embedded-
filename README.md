@@ -82,6 +82,22 @@ This system implements a multi-tier security model; the [backend](./backend) uti
 
 ---
 
+## Zenith Sleep App Features
+
+- Live fall detection alerts (from Firebase `/latest.json`)
+- Live sleepwalking detection status
+- Device wear status (`device_on_person`)
+- Device temperature display (`tmp_die_c`)
+- Weekly and monthly sleepwalking counts
+- Doctor notes synced between app and doctor dashboard
+- “Last update” timestamp for live telemetry
+- User and doctor dashboards on the marketing site
+- App login screen + PWA support
+- Simulator controls (separate page for demos)
+- ML-based device-worn detection (planned; not yet deployed)
+
+---
+
 ## How to Run the Project
 
 ### 1) Frontend (Marketing + App UI)
@@ -119,20 +135,6 @@ This script uploads to Firebase at 1 Hz and sets:
 If you are using any backend utilities, run them from the `backend/` folder.
 Most of the live UI functionality works directly from Firebase without a
 separate server.
-
----
-
-## Coursework Context
-
-This project was developed as part of **Embedded Systems Coursework 1**
-at **Imperial College London**.
-
-The system demonstrates:
-- Embedded sensor interfacing
-- IoT communication using HTTP
-- Cloud-based data storage
-- User interface design for real-world applications
-- Consideration of usability and scalability
 
 ---
 
