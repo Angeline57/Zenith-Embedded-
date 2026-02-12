@@ -57,15 +57,11 @@ This project was completed under the supervision of [Dr. Edward Stott](https://p
 
 Zenith-Embedded-/
 ├── embedded/               # Raspberry Pi sensor acquisition & processing
-├── backend/                # Cloud communication & database logic (optional)
+├── backend/                # Cloud communication & database logic 
 ├── frontend/               # Web UI (marketing + app)
 │   ├── marketing/          # Marketing website + doctor/user dashboards
 │   ├── app/                # App UI (login, dashboard, simulator, PWA)
-│   ├── Marketing video.mp4 # Marketing video asset
-│   ├── Armband_Mockup.png  # Device mockup
-│   ├── Button_mockup.png   # Device mockup
 │   └── README.md           # Frontend-specific notes
-├── zenith_sleep_logo_design.png
 └── README.md               # Main project documentation
 
 ```
@@ -90,21 +86,15 @@ This system implements a multi-tier security model; the [backend](./backend) uti
 
 ### 1) Frontend (Marketing + App UI)
 
-From the repo root, start a simple local server:
+Open these directly in your web browser (GitHub Pages):
 
-```bash
-python3 -m http.server 8000
-```
-
-Then open these in your browser:
-
-- Marketing site: `http://localhost:8000/frontend/marketing/index.html`
-- Marketing login: `http://localhost:8000/frontend/marketing/login.html`
-- Doctor dashboard: `http://localhost:8000/frontend/marketing/doctor_dashboard.html`
-- User dashboard: `http://localhost:8000/frontend/marketing/user_dashboard.html`
-- App login: `http://localhost:8000/frontend/app/login.html`
-- App dashboard: `http://localhost:8000/frontend/app/app.html`
-- Simulator (optional): `http://localhost:8000/frontend/app/sim.html`
+- Marketing site: `https://angeline57.github.io/Zenith-Embedded-/frontend/marketing/index.html`
+- Marketing login: `https://angeline57.github.io/Zenith-Embedded-/frontend/marketing/login.html`
+- Doctor dashboard: `https://angeline57.github.io/Zenith-Embedded-/frontend/marketing/doctor_dashboard.html`
+- User dashboard: `https://angeline57.github.io/Zenith-Embedded-/frontend/marketing/user_dashboard.html`
+- App login: `https://angeline57.github.io/Zenith-Embedded-/frontend/app/login.html`
+- App dashboard: `https://angeline57.github.io/Zenith-Embedded-/frontend/app/app.html`
+- Simulator (only to test app without hardware): `https://angeline57.github.io/Zenith-Embedded-/frontend/app/sim.html`
 
 Notes:
 - The app reads live data from Firebase `/latest.json`.
