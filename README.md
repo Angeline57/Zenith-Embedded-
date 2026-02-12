@@ -53,6 +53,7 @@ This project was completed under the supervision of [Dr. Edward Stott](https://p
 ```
 
 ## Repository Structure
+```text
 
 Zenith-Embedded-/
 ├── embedded/               # Raspberry Pi sensor acquisition & processing
@@ -67,7 +68,7 @@ Zenith-Embedded-/
 ├── zenith_sleep_logo_design.png
 └── README.md               # Main project documentation
 
-
+```
 ---
 
 ## Security & Authentication 
