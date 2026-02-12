@@ -8,7 +8,7 @@
 ## Project Overview
 
 Zenith Sleep is an Internet-of-Things (IoT) system designed to monitor
-**night wandering and fall events** in Alzheimer’s patients.
+**night wandering and fall events** in patients.
 The system combines embedded sensing, cloud communication, and a
 web-based user interface to provide **real-time caregiver awareness**
 and improve patient safety.
@@ -78,16 +78,47 @@ This system implements a multi-tier security model; the [backend](./backend) uti
 
 ## How to Run the Project
 
-### Frontend Only (No Backend Required)
+### 1) Frontend (Marketing + App UI)
 
-1. Navigate to the `frontend/` directory
-2. Open `index.html` in a web browser
-3. Enable mock data mode in `script.js`
+From the repo root, start a simple local server:
 
-This mode is suitable for:
-- UI testing
-- Demonstrations
-- Video recordings
+```bash
+python3 -m http.server 8000
+```
+
+Then open these in your browser:
+
+- Marketing site: `http://localhost:8000/frontend/marketing/index.html`
+- Marketing login: `http://localhost:8000/frontend/marketing/login.html`
+- Doctor dashboard: `http://localhost:8000/frontend/marketing/doctor_dashboard.html`
+- User dashboard: `http://localhost:8000/frontend/marketing/user_dashboard.html`
+- App login: `http://localhost:8000/frontend/app/login.html`
+- App dashboard: `http://localhost:8000/frontend/app/app.html`
+- Simulator (optional): `http://localhost:8000/frontend/app/sim.html`
+
+Notes:
+- The app reads live data from Firebase `/latest.json`.
+- Doctor notes and sleepwalking counts sync between app and doctor dashboard via `localStorage`
+  (requires both pages to be served from the same origin).
+
+### 2) Embedded (Raspberry Pi)
+
+Run the sensor + detection pipeline on the Pi:
+
+```bash
+python3 embedded/final_code.py
+```
+
+This script uploads to Firebase at 1 Hz and sets:
+- `fall`, `event`, `fall_state`
+- `sleepwalking`, `sleep_event`, `sleep_state`
+- `tmp_die_c` and `device_on_person`
+
+### 3) Backend (Optional)
+
+If you are using any backend utilities, run them from the `backend/` folder.
+Most of the live UI functionality works directly from Firebase without a
+separate server.
 
 ---
 
@@ -106,10 +137,6 @@ The system demonstrates:
 ---
 
 ## Future Extensions
-
 Possible future improvements include:
-- Caregiver authentication and user accounts
-- Mobile application support
-- Multi-patient monitoring
-- Long-term data analytics and trend detection
-
+- Long-term data analytics and trend detection using LLM to identify when sleepwalking trends become a concern to alert doctors.
+- Machine Learning to process thermo sensor data to accurately differentiate surrounding temperature vs body heat.

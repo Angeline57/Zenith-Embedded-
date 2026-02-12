@@ -29,6 +29,12 @@
         <div class="status__dot" id="statusDot" aria-hidden="true"></div>
       </section>
 
+      <section class="card alerts" id="alertCard">
+        <p class="label">Active alerts</p>
+        <div class="alert__empty" id="alertEmpty">No active alerts.</div>
+        <div class="alert__list" id="alertList"></div>
+      </section>
+
       <section class="card device">
         <div>
           <p class="label">Device wear status</p>
@@ -36,14 +42,6 @@
           <p class="meta" id="deviceMeta">Signal stable.</p>
         </div>
         <div class="status__dot" id="deviceDot" aria-hidden="true"></div>
-      </section>
-
-      <section class="card device">
-        <div>
-          <p class="label">Device temperature</p>
-          <h2 id="tempValue">--°C</h2>
-          <p class="meta" id="tempMeta">Latest reading from sensor.</p>
-        </div>
       </section>
 
       <section class="card stats">
@@ -56,6 +54,14 @@
           <p class="label">Sleepwalking</p>
           <p class="value" id="monthlyCount">0</p>
           <p class="meta">Past 30 days</p>
+        </div>
+      </section>
+
+      <section class="card device">
+        <div>
+          <p class="label">Device temperature</p>
+          <h2 id="tempValue">--°C</h2>
+          <p class="meta" id="tempMeta">Latest reading from sensor.</p>
         </div>
       </section>
 
@@ -77,12 +83,6 @@
           <button class="btn btn--ghost" type="submit">Send note</button>
           <button class="btn btn--ghost" type="button" id="clearNotes">Clear all notes</button>
         </form>
-      </section>
-
-      <section class="card alerts" id="alertCard">
-        <p class="label">Active alerts</p>
-        <div class="alert__empty" id="alertEmpty">No active alerts.</div>
-        <div class="alert__list" id="alertList"></div>
       </section>
 
     </main>
