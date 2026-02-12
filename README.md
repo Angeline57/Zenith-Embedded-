@@ -7,17 +7,19 @@
 
 ## Project Overview
 
-Zenith Sleep is an Internet-of-Things (IoT) system designed to monitor
-**night wandering and fall events** in patients.
-The system combines embedded sensing, cloud communication, and a
-web-based user interface to provide **real-time caregiver awareness**
-and improve patient safety.
+Zenith Sleep is an Internet-of-Things (IoT) system designed to monitor **Sleepwalking and fall events** in patients. The system combines embedded sensing, cloud communication, and a web-based user interface to provide **real-time caregiver awareness** and improve patient safety.
 
 This repository contains the **complete system**, including:
 - Embedded sensor acquisition and processing
 - Backend communication and data storage
 - Frontend user interface and marketing website
 
+This project was completed under the supervision of [Dr. Edward Stott](https://profiles.imperial.ac.uk/ed.stott) at Imperial College London, Department of Electrical and Electronic Engineering.
+
+### Project Contributors:
+- [Angeline Lin](https://github.com/Angeline57)
+- [Hyojung Hwang](https://github.com/hh4023)
+- [Krish Jindal](https://github.com/Alphablaze72)
 
 ---
 
