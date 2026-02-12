@@ -203,7 +203,7 @@ FALL_STATE_NAME = {IDLE: "IDLE", FREEFALL: "FREEFALL", IMPACT: "IMPACT", CONFIRM
 # Sleepwalking parameters 
 SLEEP_GYRO_MAX = 0.12
 SLEEP_VAR_MAX = 0.0060      # var(a_g) in g^2
-SLEEP_MIN_TIME = 12 * 60    # set to 15.0 for desk testing
+SLEEP_MIN_TIME = 10    # set to 15.0 for desk testing
 
 MOBILE_GYRO_MIN = 0.18
 MOBILE_VAR_MIN = 0.0080     # g^2
@@ -214,7 +214,7 @@ WALK_GYRO_MAX = 3.0
 WALK_VAR_MIN = 0.0120      
 
 SW_WALK_WINDOW_S = 1.5     
-SLEEPWALK_CONFIRM_TIME = 30.0  
+SLEEPWALK_CONFIRM_TIME = 5 
 
 SW_AWAKE = 0
 SW_ASLEEP = 1
