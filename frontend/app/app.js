@@ -55,10 +55,16 @@ function handleNewData(data) {
 
     // 2. Logic for Falls
     // Matches both "FALL" and "FALL_DETECTED" for safety
-    const isFall = data.fall === true || data.event === "FALL" || data.event === "FALL_DETECTED";
+    const isFall =
+        data.fall === true ||
+        data.event === "FALL" ||
+        data.event === "FALL_DETECTED";
     
     // 3. Logic for Sleepwalking
-    const isSleepwalking = data.event === "SLEEPWALKING" || data.fall_state === "MOVING";
+    const isSleepwalking =
+        data.sleepwalking === true ||
+        data.sleep_state === "SLEEPWALKING" ||
+        data.sleep_event === "SLEEPWALKING_DETECTED";
 
     // 4. Update UI based on logic
     if (isFall && !activeFallAlert) {
