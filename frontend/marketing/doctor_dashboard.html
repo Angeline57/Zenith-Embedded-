@@ -36,19 +36,30 @@
         </div>
 
         <section class="dashboard__panel">
-          <h2 class="section-title">Patient data</h2>
+          <h2 class="section-title">Patient records</h2>
+          <div class="patient-tabs" role="tablist">
+            <button class="patient-tab is-active" data-patient="p1" role="tab">
+              E. Johnson (Connected)
+            </button>
+            <button class="patient-tab" data-patient="p2" role="tab">
+              A. Smith
+            </button>
+            <button class="patient-tab" data-patient="p3" role="tab">
+              R. Patel
+            </button>
+          </div>
           <div class="patient-grid">
             <div>
               <p class="stat-label">Patient</p>
-              <p class="stat-value">E. Johnson</p>
+              <p class="stat-value" id="patientName">E. Johnson</p>
             </div>
             <div>
               <p class="stat-label">Risk level</p>
-              <p class="stat-value">Moderate</p>
+              <p class="stat-value" id="patientRisk">Moderate</p>
             </div>
             <div>
               <p class="stat-label">Last incident</p>
-              <p class="stat-value">2 nights ago</p>
+              <p class="stat-value" id="patientIncident">2 nights ago</p>
             </div>
           </div>
         </section>
@@ -82,7 +93,9 @@
             </button>
           </form>
           <ul class="notes-list" id="notesList"></ul>
-          <p class="stat-meta">Notes sync to the patient app in this demo.</p>
+          <p class="stat-meta" id="notesHint">
+            Notes sync to the patient app for E. Johnson in this demo.
+          </p>
         </section>
       </div>
     </main>
@@ -97,12 +110,48 @@
       const noteText = document.getElementById("noteText");
       const notesList = document.getElementById("notesList");
       const clearNotes = document.getElementById("clearNotes");
+      const patientTabs = document.querySelectorAll(".patient-tab");
+      const patientName = document.getElementById("patientName");
+      const patientRisk = document.getElementById("patientRisk");
+      const patientIncident = document.getElementById("patientIncident");
+      const notesHint = document.getElementById("notesHint");
 
       const STORAGE_KEY = "zenith_shared_notes";
       const COUNTS_KEY = "zenith_sleepwalk_counts";
 
+      const patients = {
+        p1: {
+          name: "E. Johnson",
+          risk: "Moderate",
+          incident: "2 nights ago",
+          notesKey: STORAGE_KEY,
+          countsKey: COUNTS_KEY,
+          connected: true,
+        },
+        p2: {
+          name: "A. Smith",
+          risk: "Low",
+          incident: "6 nights ago",
+          notesKey: "zenith_notes_p2",
+          countsKey: "zenith_counts_p2",
+          connected: false,
+        },
+        p3: {
+          name: "R. Patel",
+          risk: "High",
+          incident: "Last night",
+          notesKey: "zenith_notes_p3",
+          countsKey: "zenith_counts_p3",
+          connected: false,
+        },
+      };
+
+      let activePatient = "p1";
+
       function loadNotes() {
-        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        const stored = JSON.parse(
+          localStorage.getItem(patients[activePatient].notesKey) || "[]"
+        );
         notesList.innerHTML = "";
         stored.forEach((note) => {
           const li = document.createElement("li");
@@ -112,7 +161,9 @@
       }
 
       function loadCounts() {
-        const stored = JSON.parse(localStorage.getItem(COUNTS_KEY) || "{}");
+        const stored = JSON.parse(
+          localStorage.getItem(patients[activePatient].countsKey) || "{}"
+        );
         weeklyEl.textContent = Number.isFinite(stored.weekly) ? stored.weekly : "--";
         monthlyEl.textContent = Number.isFinite(stored.monthly) ? stored.monthly : "--";
       }
@@ -121,15 +172,20 @@
         event.preventDefault();
         const text = noteText.value.trim();
         if (!text) return;
-        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        const stored = JSON.parse(
+          localStorage.getItem(patients[activePatient].notesKey) || "[]"
+        );
         stored.unshift({ author: "Doctor", text });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(stored.slice(0, 8)));
+        localStorage.setItem(
+          patients[activePatient].notesKey,
+          JSON.stringify(stored.slice(0, 8))
+        );
         noteText.value = "";
         loadNotes();
       });
 
       clearNotes.addEventListener("click", () => {
-        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(patients[activePatient].notesKey);
         loadNotes();
       });
 
@@ -143,12 +199,33 @@
         }, 300);
       });
 
+      function setActivePatient(id) {
+        activePatient = id;
+        const patient = patients[id];
+        patientName.textContent = patient.name;
+        patientRisk.textContent = patient.risk;
+        patientIncident.textContent = patient.incident;
+        notesHint.textContent = patient.connected
+          ? "Notes sync to the patient app for this patient."
+          : "Demo-only notes for this patient.";
+
+        patientTabs.forEach((tab) => {
+          tab.classList.toggle("is-active", tab.dataset.patient === id);
+        });
+        loadNotes();
+        loadCounts();
+      }
+
+      patientTabs.forEach((tab) => {
+        tab.addEventListener("click", () => setActivePatient(tab.dataset.patient));
+      });
+
       loadNotes();
       loadCounts();
 
       window.addEventListener("storage", (event) => {
-        if (event.key === STORAGE_KEY) loadNotes();
-        if (event.key === COUNTS_KEY) loadCounts();
+        if (event.key === patients[activePatient].notesKey) loadNotes();
+        if (event.key === patients[activePatient].countsKey) loadCounts();
       });
     </script>
   </body>

@@ -499,6 +499,24 @@ h1 {
   margin-bottom: 32px;
 }
 
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.user-card {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 14px 30px rgba(10, 45, 57, 0.08);
+}
+
+.stat-meta--tiny {
+  font-size: 0.75rem;
+}
+
 .dashboard__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -544,6 +562,30 @@ h1 {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 16px;
   margin-top: 12px;
+}
+
+.patient-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.patient-tab {
+  border: 1px solid rgba(12, 59, 74, 0.2);
+  background: var(--white);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: "Work Sans", "Helvetica Neue", sans-serif;
+  font-size: 0.9rem;
+}
+
+.patient-tab.is-active {
+  background: var(--sea);
+  color: var(--white);
+  border-color: var(--sea);
 }
 
 .notes-form {

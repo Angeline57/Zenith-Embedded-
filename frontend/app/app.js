@@ -20,6 +20,8 @@ const acknowledgeBtn = document.getElementById("acknowledge");
 const deviceStatus = document.getElementById("deviceStatus");
 const deviceMeta = document.getElementById("deviceMeta");
 const deviceDot = document.getElementById("deviceDot");
+const tempValue = document.getElementById("tempValue");
+const tempMeta = document.getElementById("tempMeta");
 const deviceOn = document.getElementById("deviceOn");
 const deviceOff = document.getElementById("deviceOff");
 const speedButtons = document.querySelectorAll("[data-speed]");
@@ -73,7 +75,7 @@ function handleNewData(data) {
 
     if (isSleepwalking) {
         if (!activeSleepAlert) triggerSleepwalk();
-    } else if (activeSleepAlert && data.fall_state === "STATIONARY") {
+    } else if (activeSleepAlert) {
         resolveSleepwalk();
     }
 
@@ -81,6 +83,12 @@ function handleNewData(data) {
     const az = data.accel_mps2?.z?.toFixed(2) || "0.00";
     const temp = data.tmp_die_c ? data.tmp_die_c.toFixed(1) : "--";
     statusMeta.textContent = `Live: az=${az} | Temp=${temp}°C | ts=${lastTs.toFixed(2)}`;
+    if (tempValue) {
+      tempValue.textContent = `${temp}°C`;
+    }
+    if (tempMeta) {
+      tempMeta.textContent = "Latest reading from sensor.";
+    }
     if (lastUpdate) {
       const now = new Date();
       lastUpdate.textContent = `Last update: ${now.toLocaleTimeString()}`;

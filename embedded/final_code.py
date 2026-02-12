@@ -275,6 +275,7 @@ def main():
     latest_tmp_die_c = None
     latest_tmp_vobj_uV = None
     ts_tmp = None
+    device_on_person = None
 
     try:
         while True:
@@ -430,6 +431,7 @@ def main():
                     latest_tmp_die_c = round(float(tmp006_read_die_temp_c()), 3)
                     latest_tmp_vobj_uV = round(float(tmp006_read_vobj_uV()), 3)
                     ts_tmp = time.time()
+                    device_on_person = latest_tmp_die_c >= 27.0
                 except OSError:
                     pass
 
@@ -464,6 +466,7 @@ def main():
                     # Temperature snapshot
                     "tmp_die_c": latest_tmp_die_c,
                     "tmp_vobj_uV": latest_tmp_vobj_uV,
+                    "device_on_person": device_on_person,
 
                     "meta": {
                         "ts_imu": t,
