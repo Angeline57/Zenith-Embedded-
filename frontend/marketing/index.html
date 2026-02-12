@@ -27,9 +27,8 @@
             <p class="eyebrow">Sleep safety platform</p>
             <h1>Sleep without worry</h1>
             <p class="lead">
-              A Raspberry Pi powered monitoring system that detects sleepwalking
-              patterns, warns caretakers in real time, and escalates when a fall
-              occurs.
+              The world’s first 2-in-1 sleepwalking and fall detection sensor,
+              built to warn caretakers in real time and escalate fast.
             </p>
             <div class="hero__actions">
               <a class="btn btn--dark" href="#benefits">Explore benefits</a>
@@ -39,8 +38,8 @@
           <div class="hero__card">
             <div class="hero__card-inner">
               <p class="hero__stat">Response window</p>
-              <p class="hero__metric">30s</p>
-              <p class="hero__caption">Automatic escalation if no response.</p>
+              <p class="hero__metric">3 min</p>
+              <p class="hero__caption">Automatic escalation to our 24/7 response team.</p>
               <div class="hero__pulse" aria-hidden="true"></div>
             </div>
           </div>
@@ -100,10 +99,69 @@
                 <p class="demo-label">Fall alerts</p>
                 <p class="demo-value">0 today</p>
               </div>
-              <div>
-                <p class="demo-label">Avg response</p>
-                <p class="demo-value">18s</p>
-              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="features">
+        <div class="container features__grid">
+          <div>
+            <h2 class="section-title">Easy to use, designed for you</h2>
+            <div class="feature-list">
+              <details open>
+                <summary>Sleepwalking analysis</summary>
+                <p>
+                  Weekly and monthly frequency trends with clinician-facing notes
+                  for continuous care.
+                </p>
+              </details>
+              <details>
+                <summary>Fall detection & escalation</summary>
+                <p>
+                  Automatic alerts, acknowledgment windows, and escalation
+                  workflows for timely response.
+                </p>
+              </details>
+              <details>
+                <summary>Caregiver & doctor notes</summary>
+                <p>
+                  Two-way note sharing between caregivers and clinicians to keep
+                  care plans aligned.
+                </p>
+              </details>
+              <details>
+                <summary>Device wear status</summary>
+                <p>
+                  Real-time on-person detection so teams know when monitoring is
+                  active.
+                </p>
+              </details>
+              <details>
+                <summary>Live dashboard</summary>
+                <p>
+                  Fast, readable dashboards for patients, caregivers, and care
+                  teams.
+                </p>
+              </details>
+            </div>
+          </div>
+          <div class="device-showcase">
+            <div class="device-stage">
+              <img
+                src="../Armband_Mockup.png"
+                alt="Zenith Sleep armband mockup"
+                class="device-image is-active"
+              />
+              <img
+                src="../Button_mockup.png"
+                alt="Zenith Sleep button device mockup"
+                class="device-image"
+              />
+            </div>
+            <div class="device-controls">
+              <button class="device-dot is-active" data-index="0" aria-label="Show armband"></button>
+              <button class="device-dot" data-index="1" aria-label="Show button device"></button>
             </div>
           </div>
         </div>
@@ -131,5 +189,21 @@
         <span>Built for patients, caretakers, and clinical teams.</span>
       </div>
     </footer>
+    <script>
+      const dots = document.querySelectorAll(".device-dot");
+      const images = document.querySelectorAll(".device-image");
+
+      dots.forEach((dot) => {
+        dot.addEventListener("click", () => {
+          const index = Number(dot.dataset.index);
+          images.forEach((img, idx) => {
+            img.classList.toggle("is-active", idx === index);
+          });
+          dots.forEach((d, idx) => {
+            d.classList.toggle("is-active", idx === index);
+          });
+        });
+      });
+    </script>
   </body>
 </html>

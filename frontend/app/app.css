@@ -125,6 +125,10 @@ h1 {
   font-size: 0.85rem;
 }
 
+.meta--tiny {
+  font-size: 0.75rem;
+}
+
 .status {
   display: flex;
   justify-content: space-between;

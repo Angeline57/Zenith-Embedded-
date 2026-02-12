@@ -1,6 +1,7 @@
 const statusText = document.getElementById("statusText");
 const statusMeta = document.getElementById("statusMeta");
 const statusDot = document.getElementById("statusDot");
+const lastUpdate = document.getElementById("lastUpdate");
 const weeklyCount = document.getElementById("weeklyCount");
 const monthlyCount = document.getElementById("monthlyCount");
 const doctorNotes = document.getElementById("doctorNotes");
@@ -74,6 +75,10 @@ function handleNewData(data) {
     const az = data.accel_mps2?.z?.toFixed(2) || "0.00";
     const temp = data.tmp_die_c ? data.tmp_die_c.toFixed(1) : "--";
     statusMeta.textContent = `Live: az=${az} | Temp=${temp}°C | ts=${lastTs.toFixed(2)}`;
+    if (lastUpdate) {
+      const now = new Date();
+      lastUpdate.textContent = `Last update: ${now.toLocaleTimeString()}`;
+    }
 }
 
 // Optimized Unified Polling
