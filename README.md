@@ -54,11 +54,18 @@ This project was completed under the supervision of [Dr. Edward Stott](https://p
 
 ## Repository Structure
 
-Zenith Sleep/
-├── embedded/ # Raspberry Pi sensor acquisition & processing
-├── backend/ # Cloud communication & database logic
-├── frontend/ # Web-based UI and marketing website
-└── README.md # Main project documentation
+Zenith-Embedded-/
+├── embedded/               # Raspberry Pi sensor acquisition & processing
+├── backend/                # Cloud communication & database logic (optional)
+├── frontend/               # Web UI (marketing + app)
+│   ├── marketing/          # Marketing website + doctor/user dashboards
+│   ├── app/                # App UI (login, dashboard, simulator, PWA)
+│   ├── Marketing video.mp4 # Marketing video asset
+│   ├── Armband_Mockup.png  # Device mockup
+│   ├── Button_mockup.png   # Device mockup
+│   └── README.md           # Frontend-specific notes
+├── zenith_sleep_logo_design.png
+└── README.md               # Main project documentation
 
 
 ---
