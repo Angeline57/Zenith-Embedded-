@@ -142,3 +142,4 @@ separate server.
 Possible future improvements include:
 - Long-term data analytics and trend detection using LLM to identify when sleepwalking trends become a concern to alert doctors.
 - Machine Learning to process thermo sensor data to accurately differentiate surrounding temperature vs body heat.
+- In the event that the device disconnects from wifi, the detector will start to buzz loudly in the event of a fall to alert their caregivers.
