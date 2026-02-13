@@ -32,3 +32,4 @@ While MQTT is common in IoT, SafeSleep utilizes **HTTP (REST)** for cloud synchr
 ## ML Wear Detection (Optional)
 - `ML_device_worn.py` runs a standalone ML-based wear detector (polls Firebase + PATCHes `device_on_person`)
 - `train_device_worn.py` trains the model on `fake_temp_data.csv` and exports weights to `ML_device_worn.py`
+- Monthly data refresh is planned to run on the first day of each month (see commented scaffold in `ML_device_worn.py`).

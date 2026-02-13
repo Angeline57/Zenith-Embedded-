@@ -36,6 +36,20 @@ credentials = service_account.Credentials.from_service_account_file(
 )
 session = AuthorizedSession(credentials)
 
+# ML helpers
+def sigmoid(x: float) -> float:
+    return 1.0 / (1.0 + math.exp(-x))
+
+
+def predict_on_person(temp_c: float, mean_c: float, slope_c_s: float) -> bool:
+    z = (
+        MODEL["b0"]
+        + MODEL["b1"] * temp_c
+        + MODEL["b2"] * mean_c
+        + MODEL["b3"] * slope_c_s
+    )
+    return sigmoid(z) >= MODEL["threshold"]
+
 def update_patient_status(is_on_person):
     """Sends ONLY the status update back to Firebase."""
     try:
@@ -92,16 +106,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nBackend Stopped.")
 
-# ML helpers
-def sigmoid(x: float) -> float:
-    return 1.0 / (1.0 + math.exp(-x))
 
-
-def predict_on_person(temp_c: float, mean_c: float, slope_c_s: float) -> bool:
-    z = (
-        MODEL["b0"]
-        + MODEL["b1"] * temp_c
-        + MODEL["b2"] * mean_c
-        + MODEL["b3"] * slope_c_s
-    )
-    return sigmoid(z) >= MODEL["threshold"]

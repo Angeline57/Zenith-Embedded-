@@ -133,7 +133,7 @@ This script uploads to Firebase at 1 Hz and sets:
 - `sleepwalking`, `sleep_event`, `sleep_state`
 - `tmp_die_c` and `device_on_person`
 
-### 3) Backend (Optional)
+### 3) Backend
 
 If you are using any backend utilities, run them from the `backend/` folder.
 Most of the live UI functionality works directly from Firebase without a
