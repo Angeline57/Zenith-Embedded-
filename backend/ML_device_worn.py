@@ -117,3 +117,24 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# --- OPTIONAL: Monthly auto-collection (commented out) ---
+# This stub shows how to trigger a 10-minute collection window on the
+# first day of each month. It is intentionally commented out so it
+# doesn't affect current behavior.
+#
+# def should_collect_monthly(last_run_ts: float) -> bool:
+#     now = time.localtime()
+#     is_first_day = now.tm_mday == 1
+#     is_new_month = time.localtime(last_run_ts).tm_mon != now.tm_mon
+#     return is_first_day and is_new_month
+#
+# def run_monthly_collection():
+#     """
+#     Placeholder: collect labeled temp data for 10 minutes.
+#     You could write to a CSV or Firebase path here.
+#     """
+#     start = time.time()
+#     while time.time() - start < 600:  # 10 minutes
+#         # read /latest.json and append temp to dataset
+#         time.sleep(1)

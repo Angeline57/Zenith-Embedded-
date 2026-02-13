@@ -89,11 +89,35 @@ function handleNewData(data) {
     if (tempMeta) {
       tempMeta.textContent = "Latest reading from sensor.";
     }
-    if (lastUpdate) {
-      const now = new Date();
-      lastUpdate.textContent = `Last update: ${now.toLocaleTimeString()}`;
-    }
+if (lastUpdate) {
+  const now = new Date();
+  lastUpdate.textContent = `Last update: ${now.toLocaleTimeString()}`;
 }
+}
+
+// --- OPTIONAL: Monthly data-collection prompt (commented out) ---
+// On the first day of each month, prompt the user to wear the device
+// and then remove it for 10 minutes each to collect labeled data.
+// This is intentionally commented out to avoid affecting current behavior.
+//
+// function shouldPromptMonthly(lastPrompt) {
+//   const now = new Date();
+//   const isFirstDay = now.getDate() === 1;
+//   const isNewMonth = lastPrompt.getMonth() !== now.getMonth();
+//   return isFirstDay && isNewMonth;
+// }
+//
+// function showMonthlyPrompt() {
+//   const message =
+//     "Monthly calibration: Please wear the device for 10 minutes, then " +
+//     "remove it for 10 minutes so we can collect on/off data.";
+//   alert(message);
+// }
+//
+// const lastPrompt = new Date(0);
+// if (shouldPromptMonthly(lastPrompt)) {
+//   showMonthlyPrompt();
+// }
 
 // Optimized Unified Polling
 async function pollFirebase() {
