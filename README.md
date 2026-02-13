@@ -57,7 +57,10 @@ This project was completed under the supervision of [Dr. Edward Stott](https://p
 
 Zenith-Embedded-/
 ├── embedded/               # Raspberry Pi sensor acquisition & processing
-├── backend/                # Cloud communication & database logic 
+├── backend/                # Cloud communication & database logic
+│   ├── ML_device_worn.py   # ML device-worn detector (optional)
+│   ├── train_device_worn.py# Train ML weights from fake data
+│   └── fake_temp_data.csv  # Synthetic temperature dataset
 ├── frontend/               # Web UI (marketing + app)
 │   ├── marketing/          # Marketing website + doctor/user dashboards
 │   ├── app/                # App UI (login, dashboard, simulator, PWA)
@@ -94,7 +97,7 @@ This system implements a multi-tier security model; the [backend](./backend) uti
 - User and doctor dashboards on the marketing site
 - App login screen + PWA support
 - Simulator controls (separate page for demos)
-- ML-based device-worn detection (planned; not yet deployed)
+- ML-based device-worn detection (backend-supported)
 
 ---
 
@@ -141,5 +144,8 @@ separate server.
 ## Future Extensions
 Possible future improvements include:
 - Long-term data analytics and trend detection using LLM to identify when sleepwalking trends become a concern to alert doctors.
+<<<<<<< HEAD
 - Machine Learning to process thermo sensor data to accurately differentiate surrounding temperature vs body heat.
+=======
+>>>>>>> 607e344 (fixed ML bugs)
 - In the event that the device disconnects from wifi, the detector will start to buzz loudly in the event of a fall to alert their caregivers.

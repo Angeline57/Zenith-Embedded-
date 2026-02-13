@@ -1,16 +1,15 @@
-# -*- coding: utf-8 -*-
 """
 ML_device_worn.py
 
-Adds an ML-based device_on_person signal on top of final_code.py output
-without modifying final_code.py.
+Adds an ML-based device_on_person signal on top of main.py output
+without modifying main.py.
 
 How it works:
-1) final_code.py uploads /latest.json (incl. tmp_die_c).
+1) main.py uploads /latest.json (incl. tmp_die_c).
 2) This script polls /latest.json, computes ML features from temperature
    history, predicts on-person, and PATCHes the result back to Firebase.
 
-Replace the placeholder MODEL weights with trained values.
+Replace the MODEL weights with trained values if needed.
 """
 
 import time
@@ -19,7 +18,7 @@ from google.oauth2 import service_account
 from google.auth.transport.requests import AuthorizedSession
 
 
-# ===================== Firebase (Authenticated HTTP) =====================
+# Firebase (Authenticated HTTP) 
 DB = "https://embedded-zenith-default-rtdb.firebaseio.com/"
 KEYFILE = "/home/pi/embedded-zenith-firebase-adminsdk-fbsvc-92e37b3ef2.json"
 SCOPES = [
@@ -35,16 +34,15 @@ session = AuthorizedSession(credentials)
 LATEST_URL = DB + "latest.json"
 
 
-# ===================== ML Model (placeholder) =====================
-# Simple logistic regression: p = sigmoid(b0 + b1*temp + b2*mean + b3*slope)
-# Replace with your trained weights.
+# ML Model
 MODEL = {
     "b0": -3.821346,
-    "b1": 1.776240,
-    "b2": -1.725786,
-    "b3": 0.232956,
+    "b1": 1.776240,   # temp
+    "b2": -1.725786,  # mean temp
+    "b3": 0.232956,   # slope
     "threshold": 0.5,
 }
+
 
 def sigmoid(x: float) -> float:
     return 1.0 / (1.0 + pow(2.718281828, -x))
@@ -70,7 +68,7 @@ def main():
 
     last_ts = None
 
-print("ML_device_worn.py started: polling /latest.json and writing device_on_person")
+    print("ML_device_worn.py started: polling /latest.json and writing device_on_person")
 
     while True:
         try:
@@ -108,7 +106,6 @@ print("ML_device_worn.py started: polling /latest.json and writing device_on_per
             patch = {
                 "device_on_person": on_person,
                 "device_on_person_ml": True,
-                "device_on_person_score": None,
             }
 
             session.patch(LATEST_URL, json=patch, timeout=10)

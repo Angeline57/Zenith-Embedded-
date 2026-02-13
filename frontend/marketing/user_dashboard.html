@@ -127,8 +127,11 @@
             statusMeta.textContent = "No active alerts.";
           }
 
-          if (typeof data.device_on_person === "boolean") {
-            if (data.device_on_person) {
+          const deviceOn =
+            typeof data.device_on_person === "boolean" ? data.device_on_person : null;
+
+          if (deviceOn !== null) {
+            if (deviceOn) {
               deviceStatus.textContent = "On person";
               deviceMeta.textContent = "Signal stable.";
             } else {
